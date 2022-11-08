@@ -23,6 +23,9 @@ using namespace std;
     angolo alto destra livello
 */
 
+#define DEFAULT_PAVIMENTO   "assets\\pav1.png"
+#define DEFAULT_MURO        "assets\\muro1.png"
+
 bool tools[104] = { true };
 
 int main()
@@ -33,10 +36,16 @@ int main()
     //  Texture
     //
 
+    // Pavimento.
     sf::Sprite pavimento;
     sf::Texture pavimentoTexture;
-    pavimentoTexture.loadFromFile("assets\\pav1.png");
+    pavimentoTexture.loadFromFile(DEFAULT_PAVIMENTO);
     pavimento.setTexture(pavimentoTexture);
+    // Muro.
+    sf::Sprite muro;
+    sf::Texture muroTexture;
+    muroTexture.loadFromFile(DEFAULT_MURO);
+    muro.setTexture(muroTexture);
 
     //
     //  Player
@@ -46,10 +55,11 @@ int main()
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets\\elon.png");
     player.setTexture(playerTexture);
-    player.setPosition(128, 192);
 
     int playerX = 128;
-    int playerY = 128;
+    int playerY = 192;
+
+    player.setPosition(playerX, playerY);
 
     while (window.isOpen())
     {
@@ -91,23 +101,35 @@ int main()
             { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         };
 
-        sf::RectangleShape shape(sf::Vector2f(64, 64));
+        sf::RectangleShape mario(sf::Vector2f(64, 64));
 
+        // Disegno la Mappa.
         for (int y = 0; y < 8; y++)
         {
             for (int x = 0; x < 12; x++)
             {
-                shape.setPosition((x + 1) * 64, (y + 1) * 64);
                 pavimento.setPosition((x + 1) * 64, (y + 1) * 64);
+                muro.setPosition((x + 1) * 64, (y + 1) * 64);
 
-                if (map[y][x] == 1)
+                switch (map[y][x])
                 {
-                    shape.setFillColor(sf::Color::Red);
-                    window.draw(shape);
-                }
-                else
-                {
+                case PAVIMENTO:
                     window.draw(pavimento);
+                    break;
+
+                case MURO:
+                    window.draw(muro);
+                    break;
+
+                default:
+                    break;
+                }
+
+                if (obj[y][x] != 0)
+                {
+                    mario.setFillColor(sf::Color::Red);
+                    mario.setPosition((x + 1) * 64, (y + 1) * 64);
+                    window.draw(mario);
                 }
             }
         }
@@ -124,38 +146,24 @@ int main()
             // Interazioni Oggetti.
             if (event.type == sf::Event::MouseButtonPressed)
             {
+                /*
                 int x = sf::Mouse::getPosition(window).x / 64;
                 int y = sf::Mouse::getPosition(window).y / 64;
 
                 if (obj[y][x] == 1)
                 {
-                    sf::Font font;
-
-                    font.loadFromFile("assets\\font.ttf");
-
+                    sf::Font textFont;
                     sf::Text text;
-
-                    // select the font
-                    text.setFont(font); // font is a sf::Font
-
-                    // set the string to display
-                    text.setString("Hello world");
-
-                    // set the character size
-                    text.setCharacterSize(24); // in pixels, not points!
-
-                    // set the color
-                    text.setFillColor(sf::Color::Red);
-
-                    // set the text style
-                    text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-
+                    textFont.loadFromFile("assets\\font.ttf");
+                    text.setFont(textFont);
+                    text.setString("Obj");
+                    text.setCharacterSize(16);
+                    text.setFillColor(sf::Color::White);
+                    text.setStyle(sf::Text::Bold);
                     text.setPosition(0, 0);
                     window.draw(text);
-
-
-                    cout << "Obj" << endl;
                 }
+                */
             }
             
             // Comandi Giocatore.
