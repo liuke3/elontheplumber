@@ -1,0 +1,8 @@
+﻿  main.cpp
+C:\Users\Elon Musk\Desktop\elon\elon\main.cpp(100,57): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Elon Musk\Desktop\elon\elon\main.cpp(100,43): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Elon Musk\Desktop\elon\elon\main.cpp(101,61): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Elon Musk\Desktop\elon\elon\main.cpp(101,47): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Elon Musk\Desktop\elon\elon\main.cpp(198,45): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Elon Musk\Desktop\elon\elon\main.cpp(198,36): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+  elon.vcxproj -> C:\Users\Elon Musk\Desktop\elon\x64\Debug\elon.exe

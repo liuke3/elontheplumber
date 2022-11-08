@@ -1,0 +1,12 @@
+﻿  elon.cpp
+C:\Users\lucap\Desktop\elon\elon\elon.cpp(46,57): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\lucap\Desktop\elon\elon\elon.cpp(46,43): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\lucap\Desktop\elon\elon\elon.cpp(79,50): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\lucap\Desktop\elon\elon\elon.cpp(79,42): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\lucap\Desktop\elon\elon\elon.cpp(107,45): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\lucap\Desktop\elon\elon\elon.cpp(107,36): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+  Generazione codice in corso...
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 76 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Generazione codice terminata
+  elon.vcxproj -> C:\Users\lucap\Desktop\elon\x64\Release\elon.exe
