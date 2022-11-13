@@ -1,11 +1,10 @@
 #include <SFML/Graphics.hpp>
 
-#include <iostream>
+#include "map.hpp"
 
 using namespace std;
 
-#define PAVIMENTO   0
-#define MURO        1
+
 
 /*
     Sotto barra dell'inventario
@@ -23,34 +22,22 @@ using namespace std;
     angolo alto destra livello
 */
 
-#define DEFAULT_PAVIMENTO   "assets\\pav1.png"
-#define DEFAULT_MURO        "assets\\muro1.png"
+bool tools[10] = { true };
 
-bool tools[104] = { true };
+
+
+bool canMove(int playerX, int playerY, MAP map)
+{
+    return (evaluateColOrMap(map.col[playerY + 1], playerX) == PAVIMENTO);
+}
+
+
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(896, 768), "Elon the Plumber");
-    
-    //
-    //  Texture
-    //
 
-    // Pavimento.
-    sf::Sprite pavimento;
-    sf::Texture pavimentoTexture;
-    pavimentoTexture.loadFromFile(DEFAULT_PAVIMENTO);
-    pavimento.setTexture(pavimentoTexture);
-    // Muro.
-    sf::Sprite muro;
-    sf::Texture muroTexture;
-    muroTexture.loadFromFile(DEFAULT_MURO);
-    muro.setTexture(muroTexture);
-
-    //
-    //  Player
-    //
-    
+    // Player    
     sf::Sprite player;
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets\\elon.png");
@@ -61,78 +48,13 @@ int main()
 
     player.setPosition(playerX, playerY);
 
+    MAP defaultMap = generateDefaultMap();
+
     while (window.isOpen())
     {
         sf::Event event;
 
-        // Collisioni Mappa.
-        int col[8][12] = {
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        };
-
-        // Texture Mappa.
-        int map[8][12] = {
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-        };
-
-        // Oggetti Mappa.
-        int obj[8][12] = {
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-        };
-
-        sf::RectangleShape mario(sf::Vector2f(64, 64));
-
-        // Disegno la Mappa.
-        for (int y = 0; y < 8; y++)
-        {
-            for (int x = 0; x < 12; x++)
-            {
-                pavimento.setPosition((x + 1) * 64, (y + 1) * 64);
-                muro.setPosition((x + 1) * 64, (y + 1) * 64);
-
-                switch (map[y][x])
-                {
-                case PAVIMENTO:
-                    window.draw(pavimento);
-                    break;
-
-                case MURO:
-                    window.draw(muro);
-                    break;
-
-                default:
-                    break;
-                }
-
-                if (obj[y][x] != 0)
-                {
-                    mario.setFillColor(sf::Color::Red);
-                    mario.setPosition((x + 1) * 64, (y + 1) * 64);
-                    window.draw(mario);
-                }
-            }
-        }
+        drawMap(defaultMap, window);
 
         window.draw(player);
 
@@ -176,25 +98,40 @@ int main()
                     if (playerY - 64 >= 192)
                         playerY -= 64;
 
+                    /*
+                        Nuovo sistema movimento giocatore basato su collisioni mappa
+                        e non su limiti preimpostati. va fixata playerX e player Y relativamente
+                        alla startx draw della mappa e alla starty draw della mappa e poi siuuuuuum
+                    
+                    */
+
+                    /*
+                    if (canMove((playerX / 64), (playerY / 64) - 1, defaultMap))
+                        playerY -= 64;
+                    */
                     break;
 
                 case sf::Keyboard::S:
                 case sf::Keyboard::Down:
-                    if (playerY < (int)window.getSize().y - 256)
+                    if (playerY < (int)window.getSize().y - 256 && evaluateColOrMap(playerY + 1, playerX))
                         playerY += 64;
 
+                    /*
+                    if (canMove((playerX / 64), (playerY / 64) + 1, defaultMap))
+                        playerY += 64;
+                    */
                     break;
 
                 case sf::Keyboard::A:
                 case sf::Keyboard::Left:
-                    if (playerX - 64 >= 128)
+                    if (playerX - 64 >= 128 && evaluateColOrMap(playerY - 1, playerX))
                         playerX -= 64;
 
                     break;
 
                 case sf::Keyboard::D:
                 case sf::Keyboard::Right:
-                    if (playerX < (int)window.getSize().x - 192)
+                    if (playerX < (int)window.getSize().x - 192 && evaluateColOrMap(playerY - 1, playerX))
                         playerX += 64;
 
                     break;
