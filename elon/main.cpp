@@ -22,13 +22,67 @@ using namespace std;
     angolo alto destra livello
 */
 
-bool tools[10] = { true };
+bool tools[12] = { true };
+
+string toolsAbout[12] = {
+    "Chiaveee",
+    "Doggooo",
+    "Panooo",
+    "Se vogliooo",
+    "?",
+    "Mar-Anza",
+    "1+1=2",
+    "C++++",
+    "WINBGIM.H",
+    "ATOM",
+    "UwU",
+    ":))",
+};
 
 
 
 bool canMove(int playerX, int playerY, MAP map)
 {
-    return (evaluateColOrMap(map.col[playerY + 1], playerX) == PAVIMENTO);
+    return (!evaluateColOrMap(map.col[playerY - 1], playerX));
+}
+
+
+
+void clickOnWindow(int x, int y, sf::RenderWindow& window)
+{
+    // Toolbar.
+    if (y >= 640 && y <= 640 + 64)
+    {
+        sf::Font font;
+        font.loadFromFile(FONT);
+
+        sf::Text text;
+        text.setFont(font);
+        text.setString(toolsAbout[(x / 64) - 1]);
+        text.setCharacterSize(18);
+        text.setPosition(16, 640 + 64 + 16);
+
+        window.draw(text);
+    }
+}
+
+
+
+void drawToolBar(sf::RenderWindow &window)
+{
+    sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
+
+    for (int i = 0; i < 12; i++)
+    {
+        shape.setPosition(64 + i * 64, 640);
+
+        if (i%2== 0)
+            shape.setFillColor(sf::Color::Green);
+        else
+            shape.setFillColor(sf::Color::Magenta);
+
+        window.draw(shape);
+    }
 }
 
 
@@ -43,10 +97,10 @@ int main()
     playerTexture.loadFromFile("assets\\elon.png");
     player.setTexture(playerTexture);
 
-    int playerX = 128;
-    int playerY = 192;
+    int playerX = 2;
+    int playerY = 3;
 
-    player.setPosition(playerX, playerY);
+    player.setPosition(playerX * 64 + 64, playerY * 64 + 64);
 
     MAP defaultMap = generateDefaultMap();
 
@@ -55,6 +109,8 @@ int main()
         sf::Event event;
 
         drawMap(defaultMap, window);
+
+        drawToolBar(window);
 
         window.draw(player);
 
@@ -68,24 +124,10 @@ int main()
             // Interazioni Oggetti.
             if (event.type == sf::Event::MouseButtonPressed)
             {
-                /*
-                int x = sf::Mouse::getPosition(window).x / 64;
-                int y = sf::Mouse::getPosition(window).y / 64;
+                int x = sf::Mouse::getPosition(window).x;
+                int y = sf::Mouse::getPosition(window).y;
 
-                if (obj[y][x] == 1)
-                {
-                    sf::Font textFont;
-                    sf::Text text;
-                    textFont.loadFromFile("assets\\font.ttf");
-                    text.setFont(textFont);
-                    text.setString("Obj");
-                    text.setCharacterSize(16);
-                    text.setFillColor(sf::Color::White);
-                    text.setStyle(sf::Text::Bold);
-                    text.setPosition(0, 0);
-                    window.draw(text);
-                }
-                */
+                clickOnWindow(x, y, window);
             }
             
             // Comandi Giocatore.
@@ -95,44 +137,29 @@ int main()
                 {
                 case sf::Keyboard::W:
                 case sf::Keyboard::Up:
-                    if (playerY - 64 >= 192)
-                        playerY -= 64;
+                    if (canMove(playerX, playerY - 1, defaultMap))
+                        playerY -= 1;
 
-                    /*
-                        Nuovo sistema movimento giocatore basato su collisioni mappa
-                        e non su limiti preimpostati. va fixata playerX e player Y relativamente
-                        alla startx draw della mappa e alla starty draw della mappa e poi siuuuuuum
-                    
-                    */
-
-                    /*
-                    if (canMove((playerX / 64), (playerY / 64) - 1, defaultMap))
-                        playerY -= 64;
-                    */
                     break;
 
                 case sf::Keyboard::S:
                 case sf::Keyboard::Down:
-                    if (playerY < (int)window.getSize().y - 256 && evaluateColOrMap(playerY + 1, playerX))
-                        playerY += 64;
+                    if (canMove(playerX, playerY + 1, defaultMap))
+                        playerY += 1;
 
-                    /*
-                    if (canMove((playerX / 64), (playerY / 64) + 1, defaultMap))
-                        playerY += 64;
-                    */
                     break;
 
                 case sf::Keyboard::A:
                 case sf::Keyboard::Left:
-                    if (playerX - 64 >= 128 && evaluateColOrMap(playerY - 1, playerX))
-                        playerX -= 64;
+                    if (canMove(playerX - 1, playerY, defaultMap))
+                        playerX -= 1;
 
                     break;
 
                 case sf::Keyboard::D:
                 case sf::Keyboard::Right:
-                    if (playerX < (int)window.getSize().x - 192 && evaluateColOrMap(playerY - 1, playerX))
-                        playerX += 64;
+                    if (canMove(playerX + 1, playerY, defaultMap))
+                        playerX += 1;
 
                     break;
 
@@ -140,7 +167,7 @@ int main()
                     break;
                 }
 
-                player.setPosition(playerX, playerY);
+                player.setPosition(playerX * 64 + 64, playerY * 64 + 64);
             }
         }
 

@@ -17,6 +17,8 @@ using namespace sf;
 #define DEFAULT_PAVIMENTO   "assets\\pav1.png"
 #define DEFAULT_MURO        "assets\\muro1.png"
 
+#define FONT        "assets\\font.ttf"
+
 
 
 struct MAP
@@ -69,7 +71,7 @@ MAP generateDefaultMap()
         4095,   // 00000000 00000000 00001111 11111111
         2049,   // 00000000 00000000 00001000 00000001
         2049,   // 00000000 00000000 00001000 00000001
-        2049,   // 00000000 00000000 00001110 00000111
+        3591,   // 00000000 00000000 00001110 00000111
         2049,   // 00000000 00000000 00001000 00000001
         2049,   // 00000000 00000000 00001000 00000001
         2049,   // 00000000 00000000 00001000 00000001
@@ -117,6 +119,20 @@ int evaluateColOrMap(unsigned row, unsigned col)
 
 void drawMap(MAP map, RenderWindow &window)
 {
+    sf::Font font;
+    font.loadFromFile(FONT);
+
+    stringstream ss;
+    ss << "Livello " << map.id;
+
+    sf::Text text;
+    text.setFont(font);
+    text.setString(ss.str());
+    text.setCharacterSize(24);
+    text.setPosition(16, 16);
+
+    window.draw(text);
+
     // Pavimento.
     sf::Sprite pavimento;
     sf::Texture pavimentoTexture;
