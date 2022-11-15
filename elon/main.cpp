@@ -22,7 +22,7 @@ using namespace std;
     angolo alto destra livello
 */
 
-bool tools[4] = { true };
+bool tools[4] = { false, false, false, false };
 
 string toolsAbout[4] = {
     "Chiave Tedesca",
@@ -104,22 +104,50 @@ int main()
     
     sf::Sprite wrench;
     sf::Texture wrenchTexture;
-    wrenchTexture.loadFromFile("assets\\wrench.png");
+    if (tools[0] == true)
+    {
+		wrenchTexture.loadFromFile("assets\\wrench.png");
+	}
+	else
+	{
+		wrenchTexture.loadFromFile("assets\\wrench_discolored.png");
+    }
     wrench.setTexture(wrenchTexture);
 	
     sf::Sprite scotch;
     sf::Texture scotchTexture;
-    scotchTexture.loadFromFile("assets\\scotch.png");
+    if (tools[1] == true)
+    {
+        scotchTexture.loadFromFile("assets\\scotch.png");
+    }
+    else
+    {
+        scotchTexture.loadFromFile("assets\\scotch_discolored.png");
+    }
     scotch.setTexture(scotchTexture);
     
     sf::Sprite panno;
     sf::Texture pannoTexture;
-    pannoTexture.loadFromFile("assets\\panno.png");
+    if (tools[2] == true)
+    {
+        pannoTexture.loadFromFile("assets\\panno.png");
+    }
+    else
+    {
+        pannoTexture.loadFromFile("assets\\panno_discolored.png");
+    }
     panno.setTexture(pannoTexture);
     
     sf::Sprite spongebob;
     sf::Texture spongebobTexture;
-    spongebobTexture.loadFromFile("assets\\spongebob.png");
+    if (tools[3] == true)
+    {
+        spongebobTexture.loadFromFile("assets\\spongebob.png");
+    }
+    else
+    {
+        spongebobTexture.loadFromFile("assets\\spongebob_discolored.png");
+    }
     spongebob.setTexture(spongebobTexture);
 	
     //

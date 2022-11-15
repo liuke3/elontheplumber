@@ -7,6 +7,6 @@ C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(69,36
 C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(70,45): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
 C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(93,56): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
 C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(93,37): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(228,68): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(228,49): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(256,68): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(256,49): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
   elon.vcxproj -> C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\x64\Debug\elon.exe
