@@ -25,10 +25,10 @@ using namespace std;
 bool tools[4] = { true };
 
 string toolsAbout[4] = {
-    "Panno Magico",
     "Chiave Tedesca",
-    "Spugna Grossa",
     "Nastro Adesivo",
+    "Panno Magico",
+    "Spugna Grossa alias spongebob",
 };
 
 
@@ -101,41 +101,37 @@ int main()
     //
     //Tool bar
     //
-    /*
-    sf::Sprite wrench;
-    sf::Texture wrenchTexture;
-    wrenchTexture.loadFromFile("assets\\wrench.png");
-    wrench.setTexture(wrenchTexture);
     
     sf::Sprite wrench;
     sf::Texture wrenchTexture;
     wrenchTexture.loadFromFile("assets\\wrench.png");
     wrench.setTexture(wrenchTexture);
+	
+    sf::Sprite scotch;
+    sf::Texture scotchTexture;
+    scotchTexture.loadFromFile("assets\\scotch.png");
+    scotch.setTexture(scotchTexture);
     
-    sf::Sprite wrench;
-    sf::Texture wrenchTexture;
-    wrenchTexture.loadFromFile("assets\\wrench.png");
-    wrench.setTexture(wrenchTexture);
+    sf::Sprite panno;
+    sf::Texture pannoTexture;
+    pannoTexture.loadFromFile("assets\\panno.png");
+    panno.setTexture(pannoTexture);
     
-    sf::Sprite wrench;
-    sf::Texture wrenchTexture;
-    wrenchTexture.loadFromFile("assets\\wrench.png");
-    wrench.setTexture(wrenchTexture);
-
-    sf::Sprite wrench;
-    sf::Texture wrenchTexture;
-    wrenchTexture.loadFromFile("assets\\wrench.png");
-    wrench.setTexture(wrenchTexture);
-    */
+    sf::Sprite spongebob;
+    sf::Texture spongebobTexture;
+    spongebobTexture.loadFromFile("assets\\spongebob.png");
+    spongebob.setTexture(spongebobTexture);
+	
     //
     //
     //
+	
     sf::Font font;
     font.loadFromFile(FONT);
 
     sf::Text text;
     text.setFont(font);
-    text.setString("sono un fenomeno");
+    text.setString("");
     text.setCharacterSize(18);
     text.setPosition(32, 640 + 64 + 16);
 
@@ -149,6 +145,17 @@ int main()
 
         drawMap(defaultMap, window);
         drawToolBar(window);
+		
+        wrench.setPosition(64 + 256+ 0 * 64, 640);
+        scotch.setPosition(64 + 256 + 1 * 64, 640);
+        panno.setPosition(64 + 256 + 2 * 64, 640);
+        spongebob.setPosition(64 + 256 + 3 * 64, 640);
+		
+		window.draw(wrench);
+		window.draw(scotch);
+		window.draw(panno);
+		window.draw(spongebob);
+		
 
         window.draw(player);
         window.draw(text);
