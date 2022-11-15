@@ -22,28 +22,20 @@ using namespace std;
     angolo alto destra livello
 */
 
-bool tools[12] = { true };
+bool tools[4] = { true };
 
-string toolsAbout[12] = {
-    "Chiaveee",
-    "Doggooo",
-    "Panooo",
-    "Se vogliooo",
-    "?",
-    "Mar-Anza",
-    "1+1=2",
-    "C++++",
-    "WINBGIM.H",
-    "ATOM",
-    "UwU",
-    ":))",
+string toolsAbout[4] = {
+    "Panno Magico",
+    "Chiave Tedesca",
+    "Spugna Grossa",
+    "Nastro Adesivo",
 };
 
 
 
 bool canMove(int playerX, int playerY, MAP map)
 {
-    return (!evaluateColOrMap(map.col[playerY - 1], playerX));
+    return (!evaluateCol(map.col[playerY - 1], playerX));
 }
 
 
@@ -51,19 +43,15 @@ bool canMove(int playerX, int playerY, MAP map)
 void clickOnWindow(int x, int y, sf::RenderWindow& window)
 {
     // Toolbar.
+}
+
+
+string getToolAbout(int x, int y, sf::RenderWindow& window)
+{
     if (y >= 640 && y <= 640 + 64)
-    {
-        sf::Font font;
-        font.loadFromFile(FONT);
+        return toolsAbout[(x / 64) - 5];
 
-        sf::Text text;
-        text.setFont(font);
-        text.setString(toolsAbout[(x / 64) - 1]);
-        text.setCharacterSize(18);
-        text.setPosition(16, 640 + 64 + 16);
-
-        window.draw(text);
-    }
+    return "";
 }
 
 
@@ -71,17 +59,19 @@ void clickOnWindow(int x, int y, sf::RenderWindow& window)
 void drawToolBar(sf::RenderWindow &window)
 {
     sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
+    sf::Sprite Obj_exhibition;
+    sf::Texture Obj_exhibition_texture;
+    Obj_exhibition_texture.loadFromFile("assets\\object-touch.png");
+    Obj_exhibition.setTexture(Obj_exhibition_texture);
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 4; i++)
     {
-        shape.setPosition(64 + i * 64, 640);
-
-        if (i%2== 0)
-            shape.setFillColor(sf::Color::Green);
-        else
-            shape.setFillColor(sf::Color::Magenta);
-
+        shape.setPosition(64 + 256 + i * 64, 640);
+        Obj_exhibition.setPosition(64 + 256 + i * 64, 640);
+        sf::Color redondi(100, 100, 100, 100);
+        shape.setFillColor(redondi);
         window.draw(shape);
+        window.draw(Obj_exhibition);
     }
 }
 
@@ -94,7 +84,7 @@ int main()
     // Player    
     sf::Sprite player;
     sf::Texture playerTexture;
-    playerTexture.loadFromFile("assets\\elon.png");
+    playerTexture.loadFromFile("assets\\elon_d_def.png");
     player.setTexture(playerTexture);
 
     int playerX = 2;
@@ -102,17 +92,66 @@ int main()
 
     player.setPosition(playerX * 64 + 64, playerY * 64 + 64);
 
+
+
     MAP defaultMap = generateDefaultMap();
 
+
+
+    //
+    //Tool bar
+    //
+    /*
+    sf::Sprite wrench;
+    sf::Texture wrenchTexture;
+    wrenchTexture.loadFromFile("assets\\wrench.png");
+    wrench.setTexture(wrenchTexture);
+    
+    sf::Sprite wrench;
+    sf::Texture wrenchTexture;
+    wrenchTexture.loadFromFile("assets\\wrench.png");
+    wrench.setTexture(wrenchTexture);
+    
+    sf::Sprite wrench;
+    sf::Texture wrenchTexture;
+    wrenchTexture.loadFromFile("assets\\wrench.png");
+    wrench.setTexture(wrenchTexture);
+    
+    sf::Sprite wrench;
+    sf::Texture wrenchTexture;
+    wrenchTexture.loadFromFile("assets\\wrench.png");
+    wrench.setTexture(wrenchTexture);
+
+    sf::Sprite wrench;
+    sf::Texture wrenchTexture;
+    wrenchTexture.loadFromFile("assets\\wrench.png");
+    wrench.setTexture(wrenchTexture);
+    */
+    //
+    //
+    //
+    sf::Font font;
+    font.loadFromFile(FONT);
+
+    sf::Text text;
+    text.setFont(font);
+    text.setString("sono un fenomeno");
+    text.setCharacterSize(18);
+    text.setPosition(32, 640 + 64 + 16);
+
+
+
     while (window.isOpen())
-    {
+    {   
         sf::Event event;
 
-        drawMap(defaultMap, window);
+        window.clear();
 
+        drawMap(defaultMap, window);
         drawToolBar(window);
 
         window.draw(player);
+        window.draw(text);
 
         while (window.pollEvent(event))
         {
@@ -127,7 +166,7 @@ int main()
                 int x = sf::Mouse::getPosition(window).x;
                 int y = sf::Mouse::getPosition(window).y;
 
-                clickOnWindow(x, y, window);
+                text.setString(getToolAbout(x,y,window));
             }
             
             // Comandi Giocatore.
@@ -137,6 +176,9 @@ int main()
                 {
                 case sf::Keyboard::W:
                 case sf::Keyboard::Up:
+                    playerTexture.loadFromFile("assets\\elon_w.png");
+                    player.setTexture(playerTexture);
+
                     if (canMove(playerX, playerY - 1, defaultMap))
                         playerY -= 1;
 
@@ -144,6 +186,9 @@ int main()
 
                 case sf::Keyboard::S:
                 case sf::Keyboard::Down:
+                    playerTexture.loadFromFile("assets\\elon_d_def.png");
+                    player.setTexture(playerTexture);
+
                     if (canMove(playerX, playerY + 1, defaultMap))
                         playerY += 1;
 
@@ -151,6 +196,9 @@ int main()
 
                 case sf::Keyboard::A:
                 case sf::Keyboard::Left:
+                    playerTexture.loadFromFile("assets\\elon_a.png");
+                    player.setTexture(playerTexture);
+
                     if (canMove(playerX - 1, playerY, defaultMap))
                         playerX -= 1;
 
@@ -158,6 +206,9 @@ int main()
 
                 case sf::Keyboard::D:
                 case sf::Keyboard::Right:
+                    playerTexture.loadFromFile("assets\\elon_d_def.png");
+                    player.setTexture(playerTexture);
+
                     if (canMove(playerX + 1, playerY, defaultMap))
                         playerX += 1;
 
@@ -172,6 +223,7 @@ int main()
         }
 
         window.display();
+
     }
 
     return 0;
