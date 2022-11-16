@@ -84,7 +84,7 @@ int main()
     // Player    
     sf::Sprite player;
     sf::Texture playerTexture;
-    playerTexture.loadFromFile("assets\\elon_d_def.png");
+    playerTexture.loadFromFile("assets\\elon_def.png");
     player.setTexture(playerTexture);
 
     int playerX = 2;
@@ -99,7 +99,7 @@ int main()
 
 
     //
-    //Tool bar
+    //Tool bar object
     //
     
     sf::Sprite wrench;
@@ -221,7 +221,7 @@ int main()
 
                 case sf::Keyboard::S:
                 case sf::Keyboard::Down:
-                    playerTexture.loadFromFile("assets\\elon_d_def.png");
+                    playerTexture.loadFromFile("assets\\elon_def.png");
                     player.setTexture(playerTexture);
 
                     if (canMove(playerX, playerY + 1, defaultMap))
@@ -241,7 +241,7 @@ int main()
 
                 case sf::Keyboard::D:
                 case sf::Keyboard::Right:
-                    playerTexture.loadFromFile("assets\\elon_d_def.png");
+                    playerTexture.loadFromFile("assets\\elon_d.png");
                     player.setTexture(playerTexture);
 
                     if (canMove(playerX + 1, playerY, defaultMap))
