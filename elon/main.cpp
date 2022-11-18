@@ -4,32 +4,38 @@
 
 using namespace std;
 
+//
+//  Variabili Globali
+//
 
+#pragma region Variabili Globali
 
-/*
-    Sotto barra dell'inventario
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
-    col maouse si selezione l'oggetto attivo e quando ci si avvicina
-    a una roba interagente se l'oggetto giusto è selezionato fai qualcosa
-    struemnto colorate = true;
-    strumento scolorato = false;
+// Stato Strumenti.
+bool tools[4] = {
+    false,
+    false,
+    false,
+    false
+};
 
-    selezionabile solo se true o colorato
-
-    dietro ognis strumento una cornce
-
-    angolo alto sinistra descrizione
-    angolo alto destra livello
-*/
-
-bool tools[4] = { false, false, false, false };
-
+// Descrizione Strumenti.
 string toolsAbout[4] = {
     "Chiave Tedesca",
     "Nastro Adesivo",
     "Panno Magico",
     "Spugna Grossa alias spongebob",
 };
+
+// Mappa Corrente.
+MAP currentMap;
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+#pragma endregion
 
 
 
@@ -42,12 +48,14 @@ bool canMove(int playerX, int playerY, MAP map)
 
 void clickOnWindow(int x, int y, sf::RenderWindow& window)
 {
-    // Toolbar.
+    
 }
+
 
 
 string getToolAbout(int x, int y, sf::RenderWindow& window)
 {
+    // Descrizione Strumenti.
     if (y >= 640 && y <= 640 + 64)
         return toolsAbout[(x / 64) - 5];
 
@@ -59,6 +67,7 @@ string getToolAbout(int x, int y, sf::RenderWindow& window)
 void drawToolBar(sf::RenderWindow &window)
 {
     sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
+    
     sf::Sprite Obj_exhibition;
     sf::Texture Obj_exhibition_texture;
     Obj_exhibition_texture.loadFromFile("assets\\object-touch.png");
@@ -99,59 +108,65 @@ int main()
 
 
     //
-    //Tool bar object
+    //  Wrench
     //
     
     sf::Sprite wrench;
     sf::Texture wrenchTexture;
+
     if (tools[0] == true)
-    {
 		wrenchTexture.loadFromFile("assets\\wrench.png");
-	}
 	else
-	{
 		wrenchTexture.loadFromFile("assets\\wrench_discolored.png");
-    }
+
     wrench.setTexture(wrenchTexture);
 	
+    //
+    //  Scotch
+    //
+
     sf::Sprite scotch;
     sf::Texture scotchTexture;
+
     if (tools[1] == true)
-    {
         scotchTexture.loadFromFile("assets\\scotch.png");
-    }
     else
-    {
         scotchTexture.loadFromFile("assets\\scotch_discolored.png");
-    }
+
     scotch.setTexture(scotchTexture);
+    
+    //
+    //  Panno
+    //
     
     sf::Sprite panno;
     sf::Texture pannoTexture;
+
     if (tools[2] == true)
-    {
         pannoTexture.loadFromFile("assets\\panno.png");
-    }
     else
-    {
         pannoTexture.loadFromFile("assets\\panno_discolored.png");
-    }
+
     panno.setTexture(pannoTexture);
     
+    //
+    //  Spugna
+    //
+
     sf::Sprite spongebob;
     sf::Texture spongebobTexture;
+
     if (tools[3] == true)
-    {
         spongebobTexture.loadFromFile("assets\\spongebob.png");
-    }
     else
-    {
         spongebobTexture.loadFromFile("assets\\spongebob_discolored.png");
-    }
+
     spongebob.setTexture(spongebobTexture);
 	
+
+
     //
-    //
+    //  Font Scritte
     //
 	
     sf::Font font;
@@ -174,6 +189,7 @@ int main()
         drawMap(defaultMap, window);
         drawToolBar(window);
 		
+        // Oggetti.
         wrench.setPosition(64 + 256+ 0 * 64, 640);
         scotch.setPosition(64 + 256 + 1 * 64, 640);
         panno.setPosition(64 + 256 + 2 * 64, 640);
@@ -184,7 +200,7 @@ int main()
 		window.draw(panno);
 		window.draw(spongebob);
 		
-
+        // Atro.
         window.draw(player);
         window.draw(text);
 

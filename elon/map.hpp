@@ -13,11 +13,19 @@ using namespace sf;
 
 #define PAVIMENTO   0
 #define MURO        1
+#define MUROBRUTTO  2
+#define VUOTO       3
 
 #define DEFAULT_PAVIMENTO   "assets\\pav1.png"
 #define DEFAULT_MURO        "assets\\muro1.png"
+#define DEFAULT_MUROBRUTTO  "assets\\murobrutto1.png"
+#define DEFAULT_VUOTO       "assets\\vuoto1.png"
 
 #define FONT        "assets\\font.ttf"
+
+
+
+#define VALVOLA 0
 
 
 
@@ -34,7 +42,7 @@ struct MAP
     // Texture Mappa.
     unsigned* map = nullptr;
     // Oggetti Mappa.
-    short obj[8][12];
+    short** obj = nullptr;
 };
 
 
@@ -63,8 +71,8 @@ MAP generateDefaultMap()
 
         Esempio:
 
-        1 => Muro (Non si può Camminare)
-        0 => Pavimento (Si può Camminare)
+        1 => Muro (Non si puï¿½ Camminare)
+        0 => Pavimento (Si puï¿½ Camminare)
     */
 
     t.col = new unsigned[8] {
@@ -87,8 +95,10 @@ MAP generateDefaultMap()
 
         Esempio:
 
-        1 => Muro (Non si può Camminare)
-        0 => Pavimento (Si può Camminare)
+        3 => Muro Sottile
+        2 => Vuoto
+        1 => Muro (Non si puï¿½ Camminare)
+        0 => Pavimento (Si puï¿½ Camminare)
     */
 
     t.map = new unsigned[8] {
@@ -103,7 +113,16 @@ MAP generateDefaultMap()
     };
 
     // Ogetti.
-   // t.obj = nullptr;
+    t.obj = new short*[8] {
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+    };
 
     return t;
 }
@@ -121,21 +140,20 @@ int evaluateMap(unsigned row, unsigned col)
 }
 
 
+
 void drawMap(MAP map, RenderWindow &window)
 {
-    sf::Font font;
-    font.loadFromFile(FONT);
-
     stringstream ss;
     ss << "Livello " << map.id;
+
+    sf::Font font;
+    font.loadFromFile(FONT);
 
     sf::Text text;
     text.setFont(font);
     text.setString(ss.str());
     text.setCharacterSize(24);
     text.setPosition(16, 16);
-
-    window.draw(text);
 
     // Pavimento.
     sf::Sprite pavimento;
@@ -148,6 +166,14 @@ void drawMap(MAP map, RenderWindow &window)
     sf::Texture muroTexture;
     muroTexture.loadFromFile(map.muro);
     muro.setTexture(muroTexture);
+
+    // Muro Brutto.
+    sf::Sprite murobrutto:
+    sf::Texture murobruttoTexture;
+
+    // Vuoto.
+    sf::RectangleShape vuoto;
+    vuoto.setFillColor(sf::Color::Black);
 
     // Disegno la Mappa.
     for (int y = 0; y < 8; y++)
@@ -167,6 +193,15 @@ void drawMap(MAP map, RenderWindow &window)
                 window.draw(muro);
                 break;
 
+            case MUROBRUTTO:
+
+                break;
+
+            case VUOTO:
+                muro.setPosition((x + 1) * 64, (y + 1) * 64);
+                window.draw(vuoto);
+                break;
+
             default:
                 break;
             }
@@ -181,4 +216,6 @@ void drawMap(MAP map, RenderWindow &window)
             */
         }
     }
+
+    window.draw(text);
 }
