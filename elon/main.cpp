@@ -4,6 +4,16 @@
 
 using namespace std;
 
+
+
+
+#define NORTH   0
+#define SOUTH   1
+#define RIGHT   2
+#define LEFT    3
+
+
+
 //
 //  Variabili Globali
 //
@@ -15,11 +25,13 @@ using namespace std;
 
 // Stato Strumenti.
 bool tools[4] = {
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
 };
+
+int selectedTool = 0;
 
 // Descrizione Strumenti.
 string toolsAbout[4] = {
@@ -28,6 +40,11 @@ string toolsAbout[4] = {
     "Panno Magico",
     "Spugna Grossa alias spongebob",
 };
+
+#define CHIAVE 0
+#define NASTRO 1
+#define PANNO 2
+#define SPUGNA 3
 
 // Mappa Corrente.
 MAP currentMap;
@@ -53,6 +70,125 @@ void clickOnWindow(int x, int y, sf::RenderWindow& window)
 
 
 
+bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
+{
+    // tocco fuori dalla mappa.
+    if (playerY - 1 < 0 || playerY + 1 > 7 ||
+        playerX - 1 < 0 || playerX + 1 > 11)
+    {
+        return false;
+    }
+
+    // spugnannn
+    if (selectedTool == SPUGNA)
+    {
+        return true;
+    }
+
+    // controllo oggetto in direzione nord.
+    if (dir == NORTH)
+    {
+        // diverso da 0 == oggetto
+        if (map.obj[playerY - 1][playerX] != 0)
+        {
+            return true;
+        }
+    }
+
+    // controllo oggetto in direzione nord.
+    if (dir == SOUTH)
+    {
+        // diverso da 0 == oggetto
+        if (map.obj[playerY + 1][playerX] != 0)
+        {
+            return true;
+        }
+    }
+
+    // controllo oggetto in direzione nord.
+    if (dir == LEFT)
+    {
+        // diverso da 0 == oggetto
+        if (map.obj[playerY][playerX - 1] != 0)
+        {
+            return true;
+        }
+    }
+
+    // controllo oggetto in direzione nord.
+    if (dir == RIGHT)
+    {
+        // diverso da 0 == oggetto
+        if (map.obj[playerY][playerX + 1] != 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+bool interagisci(int playerX, int playerY, int dir, MAP &map)
+{
+    if (playerY - 1 < 0 || playerY + 1 > 7 || playerX - 1 < 0 || playerX + 1 > 11)
+        return false;
+
+    if (dir == NORTH)
+    {
+        if (map.obj[playerY - 1][playerX] == VALVOLA)
+        {
+            map.valvola = !map.valvola;
+            return true;
+        }
+    }
+
+    if (dir == SOUTH)
+    {
+        if (map.obj[playerY + 1][playerX] == VALVOLA)
+        {
+            map.valvola = !map.valvola;
+            return true;
+        }
+    }
+
+    if (dir == LEFT)
+    {
+        if (map.obj[playerY][playerX - 1] == VALVOLA)
+        {
+            map.valvola = !map.valvola;
+            return true;
+        }
+    }
+
+    if (dir == RIGHT)
+    {
+        if (map.obj[playerY][playerX + 1] == VALVOLA)
+        {
+            map.valvola = !map.valvola;
+            return true;
+        }
+    }
+
+    if (selectedTool == SPUGNA)
+    {
+        if (map.valvola)
+        {
+            map.acqua = false;
+        }
+        else
+        {
+            cout << "chiudi prima la valvola!!!" << endl;
+        }
+    }
+
+    return true;
+}
+
+
+
+
+
 string getToolAbout(int x, int y, sf::RenderWindow& window)
 {
     // Descrizione Strumenti.
@@ -66,29 +202,63 @@ string getToolAbout(int x, int y, sf::RenderWindow& window)
 
 void drawToolBar(sf::RenderWindow &window)
 {
-    sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
-    
+    sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));   
+    sf::Color redondi(100, 100, 100, 100);
+    shape.setFillColor(redondi);
+
     sf::Sprite Obj_exhibition;
+
     sf::Texture Obj_exhibition_texture;
     Obj_exhibition_texture.loadFromFile("assets\\object-touch.png");
-    Obj_exhibition.setTexture(Obj_exhibition_texture);
+    sf::Texture Obj_exhibition_selected_texture;
+    Obj_exhibition_selected_texture.loadFromFile("assets\\object-touch-selected.png");
+
+
+
+    sf::Font font;
+    font.loadFromFile(FONT);
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(12);
+
 
     for (int i = 0; i < 4; i++)
     {
-        shape.setPosition(64 + 256 + i * 64, 640);
-        Obj_exhibition.setPosition(64 + 256 + i * 64, 640);
-        sf::Color redondi(100, 100, 100, 100);
-        shape.setFillColor(redondi);
+        stringstream ss;
+
+        // aggiungo testo allo stream
+        ss << i + 1;
+        // imposto coordinate testo.
+        text.setPosition(64 + 256 + i * 64 + 32, 665);
+        // imposto testo
+        text.setString(ss.str());
+
+        // sfondo corice
+        shape.setPosition(64 + 256 + i * 64, 610);
+        // disegno sfondo cornice
         window.draw(shape);
+        // imposto coordinate cornice
+        Obj_exhibition.setPosition(64 + 256 + i * 64, 610);
+
+        // oggetto selezionato. (faccio bordo bello)
+        if (i == selectedTool)
+            Obj_exhibition.setTexture(Obj_exhibition_selected_texture);
+        // altro oggetto (faccio bordo brutto)
+        else
+            Obj_exhibition.setTexture(Obj_exhibition_texture);
+
+        // disegno casella.
         window.draw(Obj_exhibition);
+        // disegno testo
+        window.draw(text);
     }
 }
 
 
-
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(896, 768), "Elon the Plumber");
+    sf::RenderWindow window(sf::VideoMode(896, 800), "Elon the Plumber");
 
     // Player    
     sf::Sprite player;
@@ -98,12 +268,31 @@ int main()
 
     int playerX = 2;
     int playerY = 3;
+    // direzione player. 
+    int dir = 0;
 
     player.setPosition(playerX * 64 + 64, playerY * 64 + 64);
 
 
 
     MAP defaultMap = generateDefaultMap();
+
+
+    //
+    //  Coperture
+    //
+
+    sf::Sprite cop0;
+    sf::Texture cop0_texture;
+    cop0_texture.loadFromFile("assets\\copertura0.png");
+    cop0.setTexture(cop0_texture);
+    cop0.setPosition(0, 0);
+
+    sf::Sprite cop1;
+    sf::Texture cop1_texture;
+    cop1_texture.loadFromFile("assets\\copertura1.png");
+    cop1.setTexture(cop1_texture);
+    cop1.setPosition(0, 700);
 
 
 
@@ -186,26 +375,33 @@ int main()
 
         window.clear();
 
+        // Coperture.
+        window.draw(cop0);
+        window.draw(cop1);
+
+        // Mappa.
         drawMap(defaultMap, window);
+        // ToolBar.
         drawToolBar(window);
 		
         // Oggetti.
-        wrench.setPosition(64 + 256+ 0 * 64, 640);
-        scotch.setPosition(64 + 256 + 1 * 64, 640);
-        panno.setPosition(64 + 256 + 2 * 64, 640);
-        spongebob.setPosition(64 + 256 + 3 * 64, 640);
-		
+        wrench.setPosition(64 + 256+ 0 * 64, 610);
+        scotch.setPosition(64 + 256 + 1 * 64, 610);
+        panno.setPosition(64 + 256 + 2 * 64, 610);
+        spongebob.setPosition(64 + 256 + 3 * 64, 610);
 		window.draw(wrench);
 		window.draw(scotch);
 		window.draw(panno);
 		window.draw(spongebob);
-		
-        // Atro.
+	
+        //  Player.
         window.draw(player);
+        // Testo.
         window.draw(text);
 
         while (window.pollEvent(event))
         {
+            // Close.
             if (event.type == sf::Event::Closed)
             {
                 window.close();
@@ -225,6 +421,10 @@ int main()
             {
                 switch (event.key.code)
                 {
+                    //
+                    //  MOVIMENTI
+                    //
+
                 case sf::Keyboard::W:
                 case sf::Keyboard::Up:
                     playerTexture.loadFromFile("assets\\elon_w.png");
@@ -232,6 +432,8 @@ int main()
 
                     if (canMove(playerX, playerY - 1, defaultMap))
                         playerY -= 1;
+
+                    dir = NORTH;
 
                     break;
 
@@ -243,6 +445,8 @@ int main()
                     if (canMove(playerX, playerY + 1, defaultMap))
                         playerY += 1;
 
+                    dir = SOUTH;
+
                     break;
 
                 case sf::Keyboard::A:
@@ -253,6 +457,8 @@ int main()
                     if (canMove(playerX - 1, playerY, defaultMap))
                         playerX -= 1;
 
+                    dir = LEFT;
+
                     break;
 
                 case sf::Keyboard::D:
@@ -262,6 +468,41 @@ int main()
 
                     if (canMove(playerX + 1, playerY, defaultMap))
                         playerX += 1;
+
+                    dir = RIGHT;
+
+                    break;
+
+                    //
+                    //  SELEZIONE INVENTARIO
+                    //
+
+                case sf::Keyboard::Num1:
+                    selectedTool = 0;
+                    break;
+
+                case sf::Keyboard::Num2:
+                    selectedTool = 1;
+                    break;
+
+                case sf::Keyboard::Num3:
+                    selectedTool = 2;
+                    break;
+
+                case sf::Keyboard::Num4:
+                    selectedTool = 3;
+                    break;
+
+                    //
+                    //  INTERAZIONI AMBIENTALI
+                    //
+
+                case sf::Keyboard::E:
+                case sf::Keyboard::Space:
+                    if (hoToccatoOggetto(playerX, playerY, dir, defaultMap))
+                    {
+                        interagisci(playerX, playerY, dir, defaultMap);
+                    }
 
                     break;
 
@@ -274,7 +515,6 @@ int main()
         }
 
         window.display();
-
     }
 
     return 0;

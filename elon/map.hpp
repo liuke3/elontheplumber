@@ -25,7 +25,8 @@ using namespace sf;
 
 
 
-#define VALVOLA 0
+#define VALVOLA 1
+
 
 
 
@@ -43,6 +44,14 @@ struct MAP
     unsigned* map = nullptr;
     // Oggetti Mappa.
     short** obj = nullptr;
+    // numero riparazioni per completare livello,
+    int riparazioniTot = 0;
+
+    int riparazioni = 0;
+
+    bool valvola = false;
+
+    bool acqua = true;
 };
 
 
@@ -61,6 +70,11 @@ MAP generateDefaultMap()
     t.pavimento = DEFAULT_PAVIMENTO;
     // Imposto Muro.
     t.muro = DEFAULT_MURO;
+
+    t.riparazioniTot = 10;
+    t.riparazioni = 0;
+
+    t.valvola = false;
 
     /*
         Collisioni
@@ -115,7 +129,7 @@ MAP generateDefaultMap()
     // Ogetti.
     t.obj = new short*[8] {
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 0, 2, 0, 3, 0, 4, 0, 5, 0, 0, 1, 0, },
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
@@ -152,8 +166,8 @@ void drawMap(MAP map, RenderWindow &window)
     sf::Text text;
     text.setFont(font);
     text.setString(ss.str());
-    text.setCharacterSize(24);
-    text.setPosition(16, 16);
+    text.setCharacterSize(18);
+    text.setPosition(16, 12);
 
     // Pavimento.
     sf::Sprite pavimento;
@@ -168,12 +182,18 @@ void drawMap(MAP map, RenderWindow &window)
     muro.setTexture(muroTexture);
 
     // Muro Brutto.
-    sf::Sprite murobrutto:
+    sf::Sprite murobrutto;
     sf::Texture murobruttoTexture;
 
     // Vuoto.
     sf::RectangleShape vuoto;
     vuoto.setFillColor(sf::Color::Black);
+
+    // allagato
+    sf::Sprite allagato;
+    sf::Texture allagatoTexture;
+    allagatoTexture.loadFromFile("assets\\allagato.png");
+    allagato.setTexture(allagatoTexture);
 
     // Disegno la Mappa.
     for (int y = 0; y < 8; y++)
@@ -186,6 +206,13 @@ void drawMap(MAP map, RenderWindow &window)
             case PAVIMENTO:
                 pavimento.setPosition((x + 1) * 64, (y + 1) * 64);
                 window.draw(pavimento);
+
+                if (map.acqua)
+                {
+                    allagato.setPosition((x + 1) * 64, (y + 1) * 64);
+                    window.draw(allagato);
+                }
+
                 break;
 
             case MURO:
@@ -206,16 +233,57 @@ void drawMap(MAP map, RenderWindow &window)
                 break;
             }
 
-            // Oggetti.
+            RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
+            shape.setPosition((x + 1) * 64, (y + 1) * 64);
 
-            /*
-            if (map.obj[y][x] != 0)
+            // Oggetti.
+            switch (map.obj[y][x])
             {
-                // Oggetti.
+            case VALVOLA:
+                shape.setFillColor(sf::Color::Red);
+                window.draw(shape);
+                break;
+
+            case 2:
+                shape.setFillColor(sf::Color::Green);
+                window.draw(shape);
+                break;
+
+            case 3:
+                shape.setFillColor(sf::Color::Magenta);
+                window.draw(shape);
+                break;
+
+            case 4:
+                shape.setFillColor(sf::Color::Blue);
+                window.draw(shape);
+                break;
+
+            case 5:
+                shape.setFillColor(sf::Color::Yellow);
+                window.draw(shape);
+                break;
+
+            default:
+                break;
             }
-            */
         }
     }
 
     window.draw(text);
+
+    ss << " | Riparazioni: " << map.riparazioni << "/" << map.riparazioniTot;
+    text.setString(ss.str());
+    window.draw(text);
 }
+
+/*
+prossima roba:
+
+controllare se oggetto ok per riparare
+aumentare counter
+next level
+
+fare mappe
+ficcare oggetti vari nella mappe
+*/
