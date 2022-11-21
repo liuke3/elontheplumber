@@ -58,8 +58,6 @@ MAP loadNextMap()
     return t;
 }
 
-
-
 bool canMove(int playerX, int playerY, MAP map)
 {
     return (!evaluateCol(map.col[playerY - 1], playerX));
@@ -250,6 +248,58 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(896, 800), "Elon the Plumber");
 
+    //
+    //menu
+    sf::Sprite menu;
+    sf::Texture menuTexture;
+    menuTexture.loadFromFile("assets\\menu.png");
+    menu.setTexture(menuTexture);
+    menu.setPosition(0, 30);
+	
+    bool game = false;
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        window.clear();
+        window.draw(menu);
+		
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                // Calcolo Coordinata X Relativa.
+                int x = sf::Mouse::getPosition(window).x;
+                // Calcolo Coordinata Y Relativa.
+                int y = sf::Mouse::getPosition(window).y;
+
+                cout << x << " " << y << endl;
+
+                if (x >= 291 && x <= 584 && y <= 390 && y >= 290)
+                {
+                    game = true;
+                    break;
+                }
+                else if (x >= 293 && x <= 587 && y >= 466 && y <= 540)
+                {
+                    cout << "tasti" << endl;
+                    
+                }
+                else if (x >= 291 && x <= 584 && y >= 615 && y <= 710)
+                {
+                    return 0;
+                }
+            }
+        }
+		window.display();
+        if (game == true) break;
+    }
+	//
+
+    //
     // Player    
     sf::Sprite player;
     sf::Texture playerTexture;
@@ -318,15 +368,15 @@ int main()
     //  MARTELLO
     //
     
-    sf::Sprite MARTELLO;
+    sf::Sprite MARTELL;
     sf::Texture MARTELLOTexture;
 
     if (tools[2] == true)
-        MARTELLOTexture.loadFromFile("assets\\MARTELLO.png");
+        MARTELLOTexture.loadFromFile("assets\\hammer.png");
     else
-        MARTELLOTexture.loadFromFile("assets\\MARTELLO_discolored.png");
+        MARTELLOTexture.loadFromFile("assets\\hammer_discolored.png");
 
-    MARTELLO.setTexture(MARTELLOTexture);
+    MARTELL.setTexture(MARTELLOTexture);
     
     //
     //  Spugna
@@ -380,11 +430,11 @@ int main()
         // Oggetti.
         wrench.setPosition(64 + 256+ 0 * 64, 610);
         scotch.setPosition(64 + 256 + 1 * 64, 610);
-        MARTELLO.setPosition(64 + 256 + 2 * 64, 610);
+        MARTELL.setPosition(64 + 256 + 2 * 64, 610);
         spongebob.setPosition(64 + 256 + 3 * 64, 610);
 		window.draw(wrench);
 		window.draw(scotch);
-		window.draw(MARTELLO);
+		window.draw(MARTELL);
 		window.draw(spongebob);
 	
         //  Player.
