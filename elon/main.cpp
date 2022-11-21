@@ -3,10 +3,13 @@
 #include "map.hpp"
 
 using namespace std;
+using namespace sf;
 
+//
+//  Direzioni Player
+//
 
-
-
+// Indentificativo Direzioni.
 #define NORTH   0
 #define SOUTH   1
 #define RIGHT   2
@@ -15,13 +18,14 @@ using namespace std;
 
 
 //
-//  Variabili Globali
+//  Strumenti Inventario
 //
 
-#pragma region Variabili Globali
-
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
+// Indetificativo Strumenti.
+#define CHIAVE      0
+#define NASTRO      1
+#define MARTELLO    2
+#define SPUGNA      3
 
 // Stato Strumenti.
 bool tools[4] = {
@@ -31,28 +35,28 @@ bool tools[4] = {
     true,
 };
 
+// Strumento Selezionato.
 int selectedTool = 0;
 
 // Descrizione Strumenti.
 string toolsAbout[4] = {
     "Chiave Tedesca",
     "Nastro Adesivo",
-    "Panno Magico",
-    "Spugna Grossa alias spongebob",
+    "Martello Magico",
+    "Spugna Grossa",
 };
 
-#define CHIAVE 0
-#define NASTRO 1
-#define PANNO 2
-#define SPUGNA 3
 
-// Mappa Corrente.
-MAP currentMap;
 
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
 
-#pragma endregion
+
+
+MAP loadNextMap()
+{
+    MAP t;
+
+    return t;
+}
 
 
 
@@ -61,79 +65,56 @@ bool canMove(int playerX, int playerY, MAP map)
     return (!evaluateCol(map.col[playerY - 1], playerX));
 }
 
-
-
-void clickOnWindow(int x, int y, sf::RenderWindow& window)
-{
-    
-}
-
-
-
 bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
 {
-    // tocco fuori dalla mappa.
+    // Controllo
     if (playerY - 1 < 0 || playerY + 1 > 7 ||
         playerX - 1 < 0 || playerX + 1 > 11)
-    {
         return false;
-    }
 
-    // spugnannn
+    // Spugna.
     if (selectedTool == SPUGNA)
-    {
         return true;
-    }
 
-    // controllo oggetto in direzione nord.
+    // Nord.
     if (dir == NORTH)
-    {
-        // diverso da 0 == oggetto
+        // 0 == No Oggetto.
         if (map.obj[playerY - 1][playerX] != 0)
-        {
             return true;
-        }
-    }
 
-    // controllo oggetto in direzione nord.
+    // Sud.
     if (dir == SOUTH)
-    {
-        // diverso da 0 == oggetto
+        // 0 == No Oggetto.
         if (map.obj[playerY + 1][playerX] != 0)
-        {
             return true;
-        }
-    }
 
-    // controllo oggetto in direzione nord.
+    // Sinistra.
     if (dir == LEFT)
-    {
-        // diverso da 0 == oggetto
+        // 0 == No Oggetto.
         if (map.obj[playerY][playerX - 1] != 0)
-        {
             return true;
-        }
-    }
 
-    // controllo oggetto in direzione nord.
+    // Destra.
     if (dir == RIGHT)
-    {
-        // diverso da 0 == oggetto
+        // 0 == No Oggetto.
         if (map.obj[playerY][playerX + 1] != 0)
-        {
             return true;
-        }
-    }
 
     return false;
 }
 
-
 bool interagisci(int playerX, int playerY, int dir, MAP &map)
 {
-    if (playerY - 1 < 0 || playerY + 1 > 7 || playerX - 1 < 0 || playerX + 1 > 11)
+    // Controllo
+    if (playerY - 1 < 0 || playerY + 1 > 7 ||
+        playerX - 1 < 0 || playerX + 1 > 11)
         return false;
 
+    //
+    //  Interazione Valvola
+    //
+
+    // Nord.
     if (dir == NORTH)
     {
         if (map.obj[playerY - 1][playerX] == VALVOLA)
@@ -143,6 +124,7 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
         }
     }
 
+    // Sud.
     if (dir == SOUTH)
     {
         if (map.obj[playerY + 1][playerX] == VALVOLA)
@@ -152,6 +134,7 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
         }
     }
 
+    // Sinsitra.
     if (dir == LEFT)
     {
         if (map.obj[playerY][playerX - 1] == VALVOLA)
@@ -161,6 +144,7 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
         }
     }
 
+    // Destra.
     if (dir == RIGHT)
     {
         if (map.obj[playerY][playerX + 1] == VALVOLA)
@@ -170,30 +154,36 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
         }
     }
 
+    //
+    //  Interazione Spugna.
+    //
+
     if (selectedTool == SPUGNA)
     {
-        if (map.valvola)
+        if (map.valvola && map.acqua)
         {
             map.acqua = false;
-        }
-        else
-        {
-            cout << "chiudi prima la valvola!!!" << endl;
+            map.riparazioni++;
         }
     }
 
     return true;
 }
 
-
-
-
-
-string getToolAbout(int x, int y, sf::RenderWindow& window)
+string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
 {
+    int rx = x / 64;
+    int ry = y / 64;
+
     // Descrizione Strumenti.
-    if (y >= 640 && y <= 640 + 64)
-        return toolsAbout[(x / 64) - 5];
+    if (y >= 610 && y <= 610 + 64)
+        return toolsAbout[rx - 5];
+
+    // Descrizione Ambiente.
+    if (x >= 64 && x <= 832 && y >= 64 && y <= 576)
+    {
+ 
+    }
 
     return "";
 }
@@ -325,18 +315,18 @@ int main()
     scotch.setTexture(scotchTexture);
     
     //
-    //  Panno
+    //  MARTELLO
     //
     
-    sf::Sprite panno;
-    sf::Texture pannoTexture;
+    sf::Sprite MARTELLO;
+    sf::Texture MARTELLOTexture;
 
     if (tools[2] == true)
-        pannoTexture.loadFromFile("assets\\panno.png");
+        MARTELLOTexture.loadFromFile("assets\\MARTELLO.png");
     else
-        pannoTexture.loadFromFile("assets\\panno_discolored.png");
+        MARTELLOTexture.loadFromFile("assets\\MARTELLO_discolored.png");
 
-    panno.setTexture(pannoTexture);
+    MARTELLO.setTexture(MARTELLOTexture);
     
     //
     //  Spugna
@@ -360,12 +350,11 @@ int main()
 	
     sf::Font font;
     font.loadFromFile(FONT);
-
     sf::Text text;
     text.setFont(font);
     text.setString("");
     text.setCharacterSize(18);
-    text.setPosition(32, 640 + 64 + 16);
+    text.setPosition(32, 720);
 
 
 
@@ -374,6 +363,10 @@ int main()
         sf::Event event;
 
         window.clear();
+
+        // Carico Prossima Mappa.
+        if (defaultMap.riparazioni == defaultMap.riparazioniTot)
+            defaultMap = loadNextMap();
 
         // Coperture.
         window.draw(cop0);
@@ -387,11 +380,11 @@ int main()
         // Oggetti.
         wrench.setPosition(64 + 256+ 0 * 64, 610);
         scotch.setPosition(64 + 256 + 1 * 64, 610);
-        panno.setPosition(64 + 256 + 2 * 64, 610);
+        MARTELLO.setPosition(64 + 256 + 2 * 64, 610);
         spongebob.setPosition(64 + 256 + 3 * 64, 610);
 		window.draw(wrench);
 		window.draw(scotch);
-		window.draw(panno);
+		window.draw(MARTELLO);
 		window.draw(spongebob);
 	
         //  Player.
@@ -399,26 +392,37 @@ int main()
         // Testo.
         window.draw(text);
 
+        // Ciclo Messaggi Finestra.
         while (window.pollEvent(event))
         {
-            // Close.
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
+            //
+            //  Chiusura Finestra.
+            //
 
-            // Interazioni Oggetti.
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            //
+            //  Input Mouse.
+            //
+
             if (event.type == sf::Event::MouseButtonPressed)
             {
+                // Calcolo Coordinata X Relativa.
                 int x = sf::Mouse::getPosition(window).x;
+                // Calcolo Coordinata Y Relativa.
                 int y = sf::Mouse::getPosition(window).y;
 
-                text.setString(getToolAbout(x,y,window));
+                text.setString(getAbout(x, y, defaultMap, window));
             }
             
-            // Comandi Giocatore.
+            //
+            //  Input Tastiera.
+            //
+
             if (event.type == sf::Event::KeyPressed)
             {
+                // Analisi Input.
                 switch (event.key.code)
                 {
                     //
@@ -500,9 +504,7 @@ int main()
                 case sf::Keyboard::E:
                 case sf::Keyboard::Space:
                     if (hoToccatoOggetto(playerX, playerY, dir, defaultMap))
-                    {
                         interagisci(playerX, playerY, dir, defaultMap);
-                    }
 
                     break;
 

@@ -9,24 +9,30 @@
 using namespace std;
 using namespace sf;
 
-
-
 #define PAVIMENTO   0
 #define MURO        1
 #define MUROBRUTTO  2
 #define VUOTO       3
+
+#define FONT                "assets\\font.ttf"
 
 #define DEFAULT_PAVIMENTO   "assets\\pav1.png"
 #define DEFAULT_MURO        "assets\\muro1.png"
 #define DEFAULT_MUROBRUTTO  "assets\\murobrutto1.png"
 #define DEFAULT_VUOTO       "assets\\vuoto1.png"
 
-#define FONT        "assets\\font.ttf"
-
-
-
 #define VALVOLA 1
+#define WATER   2
+#define VASCA   3
+#define DOCCIA  4
+#define BIDET   5
 
+#define VASCA_CHIAVE    20
+#define VASCA_NASTRO    21
+#define VASCA_MARTELLO  22
+#define WATER_CHIAVE    30
+#define WATER_NASTRO    31
+#define WATER_MARTELLO    31
 
 
 
@@ -34,29 +40,73 @@ struct MAP
 {
     // Identificatio Mappa.
     int id;
+
     // FileName Pavimento.
     string pavimento;
+
     // FileName Muro.
     string muro;
-    // Collisioni Mappa.
+
+    /*
+        Collisioni Mappa
+        ================
+
+        Per Risparmiare Memoria si Utilizza
+        il Contenuto Binario di un Unsigned:
+
+        Esempio:
+
+        1 => Muro (Non si pu� Camminare)
+        0 => Pavimento (Si pu� Camminare)
+    */
     unsigned* col = nullptr;
-    // Texture Mappa.
+
+    /*
+        Texture Mappa
+        =============
+
+        Per Risparmiare Memoria si Utilizza
+        il Contenuto Binario di un Unsigned:
+
+        Esempio:
+
+        3 => Vuoto
+        2 => Vuoto
+        1 => Muro
+        0 => Pavimento
+    */
     unsigned* map = nullptr;
+
     // Oggetti Mappa.
     short** obj = nullptr;
-    // numero riparazioni per completare livello,
+
+    // Riparazioni Totali Mappa.
     int riparazioniTot = 0;
 
+    // Riparazioni Effettuate Mappa.
     int riparazioni = 0;
 
+    // Stato Valvola.
+    // True     =>  Attivata.
+    // False    =>  Non Attivata.
     bool valvola = false;
 
+    // Stato Acqua.
+    // True     =>  Attiva.
+    // False    =>  Non Attiva.
     bool acqua = true;
 };
 
 
 
-MAP maps[9];
+//
+//  Mappa.
+//
+
+// Mappa Corrente.
+MAP currentMap;
+// Indice Mappa Corrente.
+int currentMapIndex = 0;
 
 
 
@@ -70,25 +120,16 @@ MAP generateDefaultMap()
     t.pavimento = DEFAULT_PAVIMENTO;
     // Imposto Muro.
     t.muro = DEFAULT_MURO;
-
+    // Imposto Riparazioni Totali Mappa.
     t.riparazioniTot = 10;
+    // Imposto Riparazioni Effettuate Mappa.
     t.riparazioni = 0;
-
+    // Imposto Valvola.
     t.valvola = false;
+    // Imposto Acqua
+    t.acqua = true;
 
-    /*
-        Collisioni
-        ==========
-
-        Per Risparmiare Memoria si Utilizza
-        il Contenuto Binario di un Unsigned:
-
-        Esempio:
-
-        1 => Muro (Non si pu� Camminare)
-        0 => Pavimento (Si pu� Camminare)
-    */
-
+    // Imposto Collisioni.
     t.col = new unsigned[8] {
         4095,   // 00000000 00000000 00001111 11111111
         2049,   // 00000000 00000000 00001000 00000001
@@ -100,21 +141,7 @@ MAP generateDefaultMap()
         4095,   // 00000000 00000000 00001111 11111111
     };
 
-    /*
-        Texture
-        =======
-
-        Per Risparmiare Memoria si Utilizza
-        il Contenuto Binario di un Unsigned:
-
-        Esempio:
-
-        3 => Muro Sottile
-        2 => Vuoto
-        1 => Muro (Non si pu� Camminare)
-        0 => Pavimento (Si pu� Camminare)
-    */
-
+    // Imposto Mappa.
     t.map = new unsigned[8] {
         5592405,   // 00000000 01010101 01010101 01010101
         5592405,   // 00000000 01010101 01010101 01010101
@@ -126,7 +153,7 @@ MAP generateDefaultMap()
         4194305,   // 00000000 01000000 00000000 00000001
     };
 
-    // Ogetti.
+    // Imposto Oggetti.
     t.obj = new short*[8] {
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
         new short[12] { 0, 2, 0, 3, 0, 4, 0, 5, 0, 0, 1, 0, },
@@ -142,27 +169,27 @@ MAP generateDefaultMap()
 }
 
 
-
+// Restituisco Valore Collisioni.
 int evaluateCol(unsigned row, unsigned col)
 {
     return (row >> col) & 1;
 }
 
+
+// Restituisco Valore Mappa.
 int evaluateMap(unsigned row, unsigned col)
 {
     return (row >> (col * 2)) & 3;
 }
 
-
-
+// Disegno Mappa.
 void drawMap(MAP map, RenderWindow &window)
 {
     stringstream ss;
-    ss << "Livello " << map.id;
+    ss << "Livello " << map.id << " | Riparazioni: " << map.riparazioni << "/" << map.riparazioniTot;
 
     sf::Font font;
     font.loadFromFile(FONT);
-
     sf::Text text;
     text.setFont(font);
     text.setString(ss.str());
@@ -189,7 +216,7 @@ void drawMap(MAP map, RenderWindow &window)
     sf::RectangleShape vuoto;
     vuoto.setFillColor(sf::Color::Black);
 
-    // allagato
+    // Allagato.
     sf::Sprite allagato;
     sf::Texture allagatoTexture;
     allagatoTexture.loadFromFile("assets\\allagato.png");
@@ -221,7 +248,6 @@ void drawMap(MAP map, RenderWindow &window)
                 break;
 
             case MUROBRUTTO:
-
                 break;
 
             case VUOTO:
@@ -244,22 +270,22 @@ void drawMap(MAP map, RenderWindow &window)
                 window.draw(shape);
                 break;
 
-            case 2:
+            case WATER:
                 shape.setFillColor(sf::Color::Green);
                 window.draw(shape);
                 break;
 
-            case 3:
+            case VASCA:
                 shape.setFillColor(sf::Color::Magenta);
                 window.draw(shape);
                 break;
 
-            case 4:
+            case DOCCIA:
                 shape.setFillColor(sf::Color::Blue);
                 window.draw(shape);
                 break;
 
-            case 5:
+            case BIDET:
                 shape.setFillColor(sf::Color::Yellow);
                 window.draw(shape);
                 break;
@@ -271,10 +297,6 @@ void drawMap(MAP map, RenderWindow &window)
     }
 
     window.draw(text);
-
-    ss << " | Riparazioni: " << map.riparazioni << "/" << map.riparazioniTot;
-    text.setString(ss.str());
-    window.draw(text);
 }
 
 /*
@@ -282,7 +304,6 @@ prossima roba:
 
 controllare se oggetto ok per riparare
 aumentare counter
-next level
 
 fare mappe
 ficcare oggetti vari nella mappe
