@@ -21,20 +21,57 @@ using namespace sf;
 #define DEFAULT_MUROBRUTTO  "assets\\murobrutto1.png"
 #define DEFAULT_VUOTO       "assets\\vuoto1.png"
 
-#define VALVOLA 1
-#define WATER   2
-#define VASCA   3
-#define DOCCIA  4
-#define BIDET   5
+#define ALLAGATO            "assets\\allagato.png"
 
+#define VALVOLA1            "assets\\valvola1.png"
+#define VALVOLA2            "assets\\valvola2.png"
+#define VASCA               "assets\\vasca.png"
+#define VASCA_ROTTO         "assets\\vasca_rotto.png"
+#define CESSO               "assets\\cesso.png"
+#define CESSO_ROTTO         "assets\\cesso_rotto.png"
+#define DOCCIA              "assets\\doccia.png"
+#define DOCCIA_ROTTO        "assets\\doccia_rotto.png"
+#define BIDET               "assets\\bidet.png"
+#define BIDET_ROTTO         "assets\\bidet_rotto.png"
+#define LAVANDINO           "assets\\lavandino.png"
+#define LAVANDINO_ROTTO     "assets\\lavandino_rotto.png"
+#define PORTELLO            "assets\\portello.png"
+#define PORTELLO_ROTTO      "assets\\portello_rotto.png"
+
+#define VALVOLA     1
+
+#define CESSO       2
+#define VASCA       3
+#define DOCCIA      4
+#define BIDET       5
+#define LAVANDINO   6
+
+#define PORTELLO    7
+
+// Vasca Varianti Minigiochi.
 #define VASCA_CHIAVE    20
 #define VASCA_NASTRO    21
 #define VASCA_MARTELLO  22
-#define WATER_CHIAVE    30
-#define WATER_NASTRO    31
-#define WATER_MARTELLO    31
 
+// Water Varianti Minigiochi.
+#define CESSO_CHIAVE    30
+#define CESSO_NASTRO    31
+#define CESSO_MARTELLO  32
 
+// Doccia Varianti Minigiochi.
+#define DOCCIA_CHIAVE   40
+#define DOCCIA_NASTRO   41
+#define DOCCIA_MARTELLO 42
+
+// Bidet Varianti Minigiochi.
+#define BIDET_CHIAVE    50
+#define BIDET_NASTRO    51
+#define BIDET_MARTELLO  52
+
+// Lavandino Varianti Minigiochi.
+#define LAVANDINO_CHIAVE    60
+#define LAVANDINO_NASTRO    61
+#define LAVANDINO_MARTELLO  62
 
 struct MAP
 {
@@ -110,6 +147,39 @@ int currentMapIndex = 0;
 
 
 
+struct POINT
+{
+    int x;
+    int y;
+
+    POINT(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+
+
+struct OBJ
+{
+    bool rotto = false;
+    int type;
+    int x;
+    int y;
+
+    OBJ(bool rotto, int type, int x, int y)
+    {
+        this.rotto = rotto;
+        this.type = type;
+        this.x = x;
+        this.y = y;
+    }
+}
+
+
+
+
 MAP generateDefaultMap()
 {
     MAP t;
@@ -158,12 +228,14 @@ MAP generateDefaultMap()
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
         new short[12] { 0, 2, 0, 3, 0, 4, 0, 5, 0, 0, 1, 0, },
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+        new short[12] { 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
         new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
     };
+
+    // nuova roba oggetti
 
     return t;
 }
@@ -219,7 +291,7 @@ void drawMap(MAP map, RenderWindow &window)
     // Allagato.
     sf::Sprite allagato;
     sf::Texture allagatoTexture;
-    allagatoTexture.loadFromFile("assets\\allagato.png");
+    allagatoTexture.loadFromFile(ALLAGATO);
     allagato.setTexture(allagatoTexture);
 
     // Disegno la Mappa.
@@ -247,11 +319,8 @@ void drawMap(MAP map, RenderWindow &window)
                 window.draw(muro);
                 break;
 
-            case MUROBRUTTO:
-                break;
-
             case VUOTO:
-                muro.setPosition((x + 1) * 64, (y + 1) * 64);
+                vuoto.setPosition((x + 1) * 64, (y + 1) * 64);
                 window.draw(vuoto);
                 break;
 
@@ -259,34 +328,46 @@ void drawMap(MAP map, RenderWindow &window)
                 break;
             }
 
-            RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
-            shape.setPosition((x + 1) * 64, (y + 1) * 64);
-
+            // Oggetto.
+            sf::Sprite obj;
+            sf::Texture objTexture;
+            // obj.loadFromFile();
+            obj.setTexture(objTexture);
+            
             // Oggetti.
             switch (map.obj[y][x])
             {
             case VALVOLA:
-                shape.setFillColor(sf::Color::Red);
-                window.draw(shape);
+                if (map.valvola)
+                    objTexture.loadFromFile(VALVOLA1);
+                else
+                    objTexture.loadFromFile(VALVOLA2);
+                
+                window.draw(obj);
                 break;
 
-            case WATER:
-                shape.setFillColor(sf::Color::Green);
+            case CESSO:
+                objTexture.loadFromFile(CESSO);
                 window.draw(shape);
                 break;
 
             case VASCA:
-                shape.setFillColor(sf::Color::Magenta);
+                objTexture.loadFromFile(VASCA);
                 window.draw(shape);
                 break;
 
             case DOCCIA:
-                shape.setFillColor(sf::Color::Blue);
+                objTexture.loadFromFile(DOCCIA);
                 window.draw(shape);
                 break;
 
             case BIDET:
-                shape.setFillColor(sf::Color::Yellow);
+                objTexture.loadFromFile(BIDET);
+                window.draw(shape);
+                break;
+
+            case LAVANDINO:
+                objTexture.loadFromFile(BIDET);
                 window.draw(shape);
                 break;
 
