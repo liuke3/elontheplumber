@@ -25,18 +25,20 @@ using namespace sf;
 
 #define VALVOLA1            "assets\\valvola1.png"
 #define VALVOLA2            "assets\\valvola2.png"
-#define VASCA               "assets\\vasca.png"
+#define VASCA_OK            "assets\\vasca.png"
 #define VASCA_ROTTO         "assets\\vasca_rotto.png"
-#define CESSO               "assets\\cesso.png"
+#define CESSO_OK             "assets\\cesso.png"
 #define CESSO_ROTTO         "assets\\cesso_rotto.png"
-#define DOCCIA              "assets\\doccia.png"
+#define DOCCIA_OK           "assets\\doccia.png"
 #define DOCCIA_ROTTO        "assets\\doccia_rotto.png"
-#define BIDET               "assets\\bidet.png"
+#define BIDET_OK            "assets\\bidet.png"
 #define BIDET_ROTTO         "assets\\bidet_rotto.png"
-#define LAVANDINO           "assets\\lavandino.png"
+#define LAVANDINO_OK        "assets\\lavandino.png"
 #define LAVANDINO_ROTTO     "assets\\lavandino_rotto.png"
-#define PORTELLO            "assets\\portello.png"
+#define PORTELLO_OK         "assets\\portello.png"
 #define PORTELLO_ROTTO      "assets\\portello_rotto.png"
+
+#define TEXTURE             "assets\\texture.png"
 
 #define VALVOLA     1
 
@@ -154,10 +156,10 @@ struct POINT
 
     POINT(int x, int y)
     {
-        this.x = x;
-        this.y = y;
+        this->x = x;
+        this->y = y;
     }
-}
+};
 
 
 
@@ -170,12 +172,12 @@ struct OBJ
 
     OBJ(bool rotto, int type, int x, int y)
     {
-        this.rotto = rotto;
-        this.type = type;
-        this.x = x;
-        this.y = y;
+        this->rotto = rotto;
+        this->type = type;
+        this->x = x;
+        this->y = y;
     }
-}
+};
 
 
 
@@ -294,6 +296,12 @@ void drawMap(MAP map, RenderWindow &window)
     allagatoTexture.loadFromFile(ALLAGATO);
     allagato.setTexture(allagatoTexture);
 
+    // Oggetto.
+    sf::Sprite obj;
+    sf::Texture objTexture;
+    objTexture.loadFromFile(VALVOLA1);
+    obj.setTexture(objTexture);
+
     // Disegno la Mappa.
     for (int y = 0; y < 8; y++)
     {
@@ -328,12 +336,8 @@ void drawMap(MAP map, RenderWindow &window)
                 break;
             }
 
-            // Oggetto.
-            sf::Sprite obj;
-            sf::Texture objTexture;
-            // obj.loadFromFile();
-            obj.setTexture(objTexture);
-            
+            obj.setPosition((x + 1) * 64, (y + 1) * 64);
+
             // Oggetti.
             switch (map.obj[y][x])
             {
@@ -342,33 +346,48 @@ void drawMap(MAP map, RenderWindow &window)
                     objTexture.loadFromFile(VALVOLA1);
                 else
                     objTexture.loadFromFile(VALVOLA2);
-                
+
+                obj.setTexture(objTexture);
                 window.draw(obj);
                 break;
 
             case CESSO:
-                objTexture.loadFromFile(CESSO);
-                window.draw(shape);
+                objTexture.loadFromFile(CESSO_OK);
+                obj.setTexture(objTexture);
+                window.draw(obj);
                 break;
 
             case VASCA:
-                objTexture.loadFromFile(VASCA);
-                window.draw(shape);
+                //objTexture.loadFromFile(VASCA_OK);
+                objTexture.loadFromFile(TEXTURE);
+                obj.setTexture(objTexture);
+                window.draw(obj);
                 break;
 
             case DOCCIA:
-                objTexture.loadFromFile(DOCCIA);
-                window.draw(shape);
+                //objTexture.loadFromFile(DOCCIA_OK);
+                objTexture.loadFromFile(TEXTURE);
+                obj.setTexture(objTexture);
+                window.draw(obj);
                 break;
 
             case BIDET:
-                objTexture.loadFromFile(BIDET);
-                window.draw(shape);
+                //objTexture.loadFromFile(BIDET_OK);
+                objTexture.loadFromFile(TEXTURE);
+                obj.setTexture(objTexture);
+                window.draw(obj);
                 break;
 
             case LAVANDINO:
-                objTexture.loadFromFile(BIDET);
-                window.draw(shape);
+                objTexture.loadFromFile(BIDET_OK);
+                obj.setTexture(objTexture);
+                window.draw(obj);
+                break;
+
+            case PORTELLO:
+                objTexture.loadFromFile(PORTELLO_ROTTO);
+                obj.setTexture(objTexture);
+                window.draw(obj);
                 break;
 
             default:
