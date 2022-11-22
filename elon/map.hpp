@@ -11,8 +11,14 @@ using namespace sf;
 
 #define PAVIMENTO   0
 #define MURO        1
-#define MUROBRUTTO  2
-#define VUOTO       3
+#define VUOTO       2
+#define VALVOLA     3
+#define CESSO       4   // Nastro
+#define VASCA       5   // Nastro
+#define DOCCIA      6   // Martello
+#define BIDET       7   // Martello
+#define LAVANDINO   8   // Chiave
+#define PORTELLO    9   // Chiave
 
 #define FONT                "assets\\font.ttf"
 
@@ -22,6 +28,7 @@ using namespace sf;
 #define DEFAULT_VUOTO       "assets\\vuoto1.png"
 
 #define ALLAGATO            "assets\\allagato.png"
+#define TEXTURE             "assets\\texture.png"
 
 #define VALVOLA1            "assets\\valvola1.png"
 #define VALVOLA2            "assets\\valvola2.png"
@@ -38,47 +45,24 @@ using namespace sf;
 #define PORTELLO_OK         "assets\\portello.png"
 #define PORTELLO_ROTTO      "assets\\portello_rotto.png"
 
-#define TEXTURE             "assets\\texture.png"
-
-#define VUOTO_TEXTURE       "assets\\vuoto.png"
-
-#define VALVOLA     1
-
-#define CESSO       2
-#define VASCA       3
-#define DOCCIA      4
-#define BIDET       5
-#define LAVANDINO   6
-
-#define PORTELLO    7
-
-// Vasca Varianti Minigiochi.
-#define VASCA_CHIAVE    20
-#define VASCA_NASTRO    21
-#define VASCA_MARTELLO  22
-
-// Water Varianti Minigiochi.
-#define CESSO_CHIAVE    30
-#define CESSO_NASTRO    31
-#define CESSO_MARTELLO  32
-
-// Doccia Varianti Minigiochi.
-#define DOCCIA_CHIAVE   40
-#define DOCCIA_NASTRO   41
-#define DOCCIA_MARTELLO 42
-
-// Bidet Varianti Minigiochi.
-#define BIDET_CHIAVE    50
-#define BIDET_NASTRO    51
-#define BIDET_MARTELLO  52
-
-// Lavandino Varianti Minigiochi.
-#define LAVANDINO_CHIAVE    60
-#define LAVANDINO_NASTRO    61
-#define LAVANDINO_MARTELLO  62
 
 
-#define SEVOGLIO            104
+
+#define SEVOGLIO    104
+
+
+
+
+
+struct OBJ
+{
+    bool rotto = false;
+    int type;
+    short x;
+    short y;
+};
+
+
 
 struct MAP
 {
@@ -121,8 +105,11 @@ struct MAP
     */
     unsigned* map = nullptr;
 
+    // Numero Oggetti.
+    int objCounter = 0;
+
     // Oggetti Mappa.
-    short** obj = nullptr;
+    OBJ* obj = nullptr;
 
     // Riparazioni Totali Mappa.
     int riparazioniTot = 0;
@@ -153,36 +140,6 @@ MAP currentMap;
 int currentMapIndex = 0;
 
 
-
-struct POINT
-{
-    int x;
-    int y;
-
-    POINT(int x, int y)
-    {
-        this->x = x;
-        this->y = y;
-    }
-};
-
-
-
-struct OBJ
-{
-    bool rotto = false;
-    int type;
-    int x;
-    int y;
-
-    OBJ(bool rotto, int type, int x, int y)
-    {
-        this->rotto = rotto;
-        this->type = type;
-        this->x = x;
-        this->y = y;
-    }
-};
 
 
 
@@ -230,19 +187,15 @@ MAP generateDefaultMap()
         4194305,   // 00000000 01000000 00000000 00000001
     };
 
+    // Imposto Numero Oggetti.
+    t.objCounter = 2;
+
     // Imposto Oggetti.
-    t.obj = new short*[8] {
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 0, 2, 0, 3, 0, 4, 0, 5, 0, 0, 1, 0, },
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
-        new short[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },
+    t.obj = new OBJ[t.objCounter]{
+        OBJ{ true, VALVOLA, 9, 1 },
+        OBJ{ true, CESSO, 1, 2},
     };
 
-    // nuova roba oggetti
 
     return t;
 }
@@ -260,6 +213,19 @@ int evaluateMap(unsigned row, unsigned col)
 {
     return (row >> (col * 2)) & 3;
 }
+
+
+OBJ quiOggetto(short x, short y, MAP map)
+{
+    OBJ e{ false, -1, -1, -1 };
+
+    for (int i = 0; i < map.objCounter; i++)
+        if (map.obj[i].x == x && map.obj[i].y == y)
+            return map.obj[i];
+
+    return e;
+}
+
 
 // Disegno Mappa.
 void drawMap(MAP map, RenderWindow &window)
@@ -287,12 +253,6 @@ void drawMap(MAP map, RenderWindow &window)
     muroTexture.loadFromFile(map.muro);
     muro.setTexture(muroTexture);
 
-    // Vuoto.
-    sf::Sprite vuoto;
-    sf::Texture vuotoTexture;
-    vuotoTexture.loadFromFile(VUOTO_TEXTURE);
-    vuoto.setTexture(vuotoTexture);
-
     // Allagato.
     sf::Sprite allagato;
     sf::Texture allagatoTexture;
@@ -304,6 +264,12 @@ void drawMap(MAP map, RenderWindow &window)
     sf::Texture objTexture;
     objTexture.loadFromFile(VALVOLA1);
     obj.setTexture(objTexture);
+
+    // Vuoto.
+    sf::RectangleShape vuoto;
+    sf::Color vuotoTexture;
+    vuotoTexture = sf::Color::Black;
+    vuoto.setFillColor(vuotoTexture);
 
     // Disegno la Mappa.
     for (int y = 0; y < 8; y++)
@@ -341,8 +307,10 @@ void drawMap(MAP map, RenderWindow &window)
 
             obj.setPosition((x + 1) * 64, (y + 1) * 64);
 
+            OBJ tempObj = quiOggetto(x, y, map);
+
             // Oggetti.
-            switch (map.obj[y][x])
+            switch (tempObj.type)
             {
             case VALVOLA:
                 if (map.valvola)
@@ -354,8 +322,12 @@ void drawMap(MAP map, RenderWindow &window)
                 window.draw(obj);
                 break;
 
-            case CESSO:
-                objTexture.loadFromFile(CESSO_OK);
+            case CESSO:          
+                if (tempObj.rotto)
+                    objTexture.loadFromFile(CESSO_ROTTO);
+                else
+                    objTexture.loadFromFile(CESSO_OK);
+
                 obj.setTexture(objTexture);
                 window.draw(obj);
                 break;
@@ -382,13 +354,21 @@ void drawMap(MAP map, RenderWindow &window)
                 break;
 
             case LAVANDINO:
-                objTexture.loadFromFile(BIDET_OK);
+                if (tempObj.rotto)
+                    objTexture.loadFromFile(LAVANDINO_ROTTO);
+                else
+                    objTexture.loadFromFile(LAVANDINO_OK);
+
                 obj.setTexture(objTexture);
                 window.draw(obj);
                 break;
 
             case PORTELLO:
-                objTexture.loadFromFile(PORTELLO_ROTTO);
+                if (tempObj.rotto)
+                    objTexture.loadFromFile(PORTELLO_ROTTO);
+                else
+                    objTexture.loadFromFile(PORTELLO_OK);
+
                 obj.setTexture(objTexture);
                 window.draw(obj);
                 break;

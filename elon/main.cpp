@@ -22,17 +22,17 @@ using namespace sf;
 //
 
 // Indetificativo Strumenti.
-#define CHIAVE      0
+#define SPUGNA      0
 #define NASTRO      1
 #define MARTELLO    2
-#define SPUGNA      3
+#define CHIAVE      3
 
 // Stato Strumenti.
 bool tools[4] = {
     true,
-    true,
-    true,
-    true,
+    false,
+    false,
+    false,
 };
 
 // Strumento Selezionato.
@@ -40,13 +40,21 @@ int selectedTool = 0;
 
 // Descrizione Strumenti.
 string toolsAbout[4] = {
-    "Chiave Tedesca",
+    "Spugna Grossa",
     "Nastro Adesivo",
     "Martello Magico",
-    "Spugna Grossa",
+    "Chiave Inglese",
 };
 
 
+
+
+// Coordinata X Player.
+int playerX = 2;
+// Coordinata Y Player.
+int playerY = 3;
+// Direzione Player. 
+int dir = 0;
 
 
 
@@ -57,6 +65,29 @@ MAP loadNextMap()
 
     return t;
 }
+
+
+
+//
+//  Minigiochi
+//
+
+void nastroGame()
+{
+    cout << "Nastro Game" << endl;
+}
+
+void martelloGame()
+{
+    cout << "Martello Game" << endl;
+}
+
+void chiaveGame()
+{
+    cout << "Chiave Game" << endl;
+}
+
+
 
 bool canMove(int playerX, int playerY, MAP map)
 {
@@ -77,25 +108,25 @@ bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
     // Nord.
     if (dir == NORTH)
         // 0 == No Oggetto.
-        if (map.obj[playerY - 1][playerX] != 0)
+        if (quiOggetto(playerX, playerY - 1, map).type >= 0)
             return true;
 
     // Sud.
     if (dir == SOUTH)
         // 0 == No Oggetto.
-        if (map.obj[playerY + 1][playerX] != 0)
+        if (quiOggetto(playerX, playerY + 1, map).type >= 0)
             return true;
 
     // Sinistra.
     if (dir == LEFT)
         // 0 == No Oggetto.
-        if (map.obj[playerY][playerX - 1] != 0)
+        if (quiOggetto(playerX - 1, playerY, map).type >= 0)
             return true;
 
     // Destra.
     if (dir == RIGHT)
         // 0 == No Oggetto.
-        if (map.obj[playerY][playerX + 1] != 0)
+        if (quiOggetto(playerX + 1, playerY, map).type >= 0)
             return true;
 
     return false;
@@ -108,54 +139,115 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
         playerX - 1 < 0 || playerX + 1 > 11)
         return false;
 
-    //
-    //  Interazione Valvola
-    //
-
     // Nord.
     if (dir == NORTH)
     {
-        if (map.obj[playerY - 1][playerX] == VALVOLA)
-        {
-            map.valvola = !map.valvola;
-            return true;
-        }
+        // Valvola.
+        if (quiOggetto(playerX, playerY - 1, map).type == VALVOLA)
+            if (!map.valvola)
+            {
+                map.valvola = true;
+                return true;
+            }
+
+        // Nastro.
+        if (selectedTool == NASTRO && quiOggetto(playerX, playerY - 1, map).type == CESSO &&
+            quiOggetto(playerX, playerY - 1, map).type == VASCA)
+            nastroGame();
+
+        // Martello.
+        if (selectedTool == MARTELLO && quiOggetto(playerX, playerY - 1, map).type == DOCCIA &&
+            quiOggetto(playerX, playerY - 1, map).type == BIDET)
+            martelloGame();
+
+        // Chiave.
+        if (selectedTool == CHIAVE && quiOggetto(playerX, playerY - 1, map).type == LAVANDINO &&
+            quiOggetto(playerX, playerY - 1, map).type == PORTELLO)
+            chiaveGame();
     }
 
     // Sud.
     if (dir == SOUTH)
     {
-        if (map.obj[playerY + 1][playerX] == VALVOLA)
-        {
-            map.valvola = !map.valvola;
-            return true;
-        }
+        // Valvola.
+        if (quiOggetto(playerX, playerY + 1, map).type == VALVOLA)
+            if (!map.valvola)
+            {
+                map.valvola = true;
+                return true;
+            }
+
+        // Nastro.
+        if (selectedTool == NASTRO && quiOggetto(playerX, playerY + 1, map).type == CESSO &&
+            quiOggetto(playerX, playerY + 1, map).type == VASCA)
+            nastroGame();
+
+        // Martello.
+        if (selectedTool == MARTELLO && quiOggetto(playerX, playerY + 1, map).type == DOCCIA &&
+            quiOggetto(playerX, playerY + 1, map).type == BIDET)
+            martelloGame();
+
+        // Chiave.
+        if (selectedTool == CHIAVE && quiOggetto(playerX, playerY + 1, map).type == LAVANDINO &&
+            quiOggetto(playerX, playerY + 1, map).type == PORTELLO)
+            chiaveGame();
     }
 
     // Sinsitra.
     if (dir == LEFT)
     {
-        if (map.obj[playerY][playerX - 1] == VALVOLA)
-        {
-            map.valvola = !map.valvola;
-            return true;
-        }
+        // Valvola.
+        if (quiOggetto(playerX - 1, playerY, map).type == VALVOLA)
+            if (!map.valvola)
+            {
+                map.valvola = true;
+                return true;
+            }
+
+        // Nastro.
+        if (selectedTool == NASTRO && quiOggetto(playerX - 1, playerY, map).type == CESSO &&
+            quiOggetto(playerX - 1, playerY, map).type == VASCA)
+            nastroGame();
+
+        // Martello.
+        if (selectedTool == MARTELLO && quiOggetto(playerX - 1, playerY, map).type == DOCCIA &&
+            quiOggetto(playerX - 1, playerY, map).type == BIDET)
+            martelloGame();
+
+        // Chiave.
+        if (selectedTool == CHIAVE && quiOggetto(playerX - 1, playerY, map).type == LAVANDINO &&
+            quiOggetto(playerX - 1, playerY, map).type == PORTELLO)
+            chiaveGame();
     }
 
     // Destra.
     if (dir == RIGHT)
     {
-        if (map.obj[playerY][playerX + 1] == VALVOLA)
-        {
-            map.valvola = !map.valvola;
-            return true;
-        }
+        // Valvola.
+        if (quiOggetto(playerX + 1, playerY, map).type == VALVOLA)
+            if (!map.valvola)
+            {
+                map.valvola = true;
+                return true;
+            }
+
+        // Nastro.
+        if (selectedTool == NASTRO && quiOggetto(playerX + 1, playerY, map).type == CESSO &&
+            quiOggetto(playerX + 1, playerY, map).type == VASCA)
+            nastroGame();
+
+        // Martello.
+        if (selectedTool == MARTELLO && quiOggetto(playerX + 1, playerY, map).type == DOCCIA &&
+            quiOggetto(playerX + 1, playerY, map).type == BIDET)
+            martelloGame();
+
+        // Chiave.
+        if (selectedTool == CHIAVE && quiOggetto(playerX + 1, playerY, map).type == LAVANDINO &&
+            quiOggetto(playerX + 1, playerY, map).type == PORTELLO)
+            chiaveGame();
     }
 
-    //
-    //  Interazione Spugna.
-    //
-
+    // Spugna.
     if (selectedTool == SPUGNA)
     {
         if (map.valvola && map.acqua)
@@ -167,6 +259,30 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
 
     return true;
 }
+
+
+
+string* objAbout1 = new string[7] {
+    "Valvola Aperta",
+    "Cesso Rotto",
+    "Vasca Incrinata",
+    "Doccia Sfasciata",
+    "Bidet Bombardato",
+    "Lavandino Innondato",
+    "Portello Dissanguato",
+};
+
+string* objAbout2 = new string[7]{
+    "Valvola Chiusa",
+    "Cesso Slendente",
+    "Vasca Immacolata",
+    "Doccia Incredibile",
+    "Bidet Fantasioso",
+    "Lavandino Asburgico",
+    "Portello Perfetto",
+};
+
+
 
 string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
 {
@@ -180,7 +296,45 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
     // Descrizione Ambiente.
     if (x >= 64 && x <= 832 && y >= 64 && y <= 576)
     {
- 
+        OBJ tempObj = quiOggetto(rx - 1, ry - 1, map);
+
+        // Elon Musk.
+        if (rx - 1 == playerX && ry - 1 == playerY)
+            return "Elon Musk";
+
+        // No Oggetto.
+        if (tempObj.type < 0)
+        {
+            switch (evaluateMap(map.map[ry - 1], rx))
+            {
+            case PAVIMENTO:
+                if (map.acqua)
+                    return "Pavimento Allagato";
+                else
+                    return "Pavimento";
+
+                break;
+
+            case MURO:
+                return "Muro";
+                break;
+
+            case VUOTO:
+                return "Vuoto Cosmico";
+                break;
+
+            default:
+                break;
+            }
+        }
+        // Sì Oggetto.
+        else
+        {
+            if (tempObj.rotto)
+                return objAbout1[tempObj.type - 3];
+            else
+                return objAbout2[tempObj.type - 3];
+        }
     }
 
     return "";
@@ -191,7 +345,8 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
 void drawToolBar(sf::RenderWindow &window)
 {
     sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));   
-    sf::Color redondi(100, 100, 100, 100);
+    sf::Color redondi;
+    redondi = sf::Color(100, 100, 100, 100);
     shape.setFillColor(redondi);
 
     sf::Sprite Obj_exhibition;
@@ -201,15 +356,11 @@ void drawToolBar(sf::RenderWindow &window)
     sf::Texture Obj_exhibition_selected_texture;
     Obj_exhibition_selected_texture.loadFromFile("assets\\object-touch-selected.png");
 
-
-
     sf::Font font;
     font.loadFromFile(FONT);
-
     sf::Text text;
     text.setFont(font);
     text.setCharacterSize(12);
-
 
     for (int i = 0; i < 4; i++)
     {
@@ -261,7 +412,9 @@ int main()
     while (window.isOpen())
     {
         sf::Event event;
+
         window.clear();
+
         window.draw(menu);
 		
         while (window.pollEvent(event))
@@ -292,22 +445,22 @@ int main()
                 }
             }
         }
+
 		window.display();
-        if (game == true) break;
+
+        if (game == true)
+            break;
     }
-	//
 
     //
-    // Player    
+    // Player
+    //
+
     sf::Sprite player;
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets\\elon_def.png");
     player.setTexture(playerTexture);
 
-    int playerX = 2;
-    int playerY = 3;
-    // direzione player. 
-    int dir = 0;
 
     player.setPosition(playerX * 64 + 64, playerY * 64 + 64);
 
@@ -332,8 +485,6 @@ int main()
     cop1.setTexture(cop1_texture);
     cop1.setPosition(0, 700);
 
-
-
     //
     //  Wrench
     //
@@ -342,12 +493,12 @@ int main()
     sf::Texture wrenchTexture;
 
     if (tools[0] == true)
-		wrenchTexture.loadFromFile("assets\\wrench.png");
-	else
-		wrenchTexture.loadFromFile("assets\\wrench_discolored.png");
+        wrenchTexture.loadFromFile("assets\\wrench.png");
+    else
+        wrenchTexture.loadFromFile("assets\\wrench_discolored.png");
 
     wrench.setTexture(wrenchTexture);
-	
+
     //
     //  Scotch
     //
@@ -363,10 +514,10 @@ int main()
     scotch.setTexture(scotchTexture);
     
     //
-    //  MARTELLO
+    //  Martello
     //
     
-    sf::Sprite MARTELL;
+    sf::Sprite martello;
     sf::Texture MARTELLOTexture;
 
     if (tools[2] == true)
@@ -374,7 +525,7 @@ int main()
     else
         MARTELLOTexture.loadFromFile("assets\\hammer_discolored.png");
 
-    MARTELL.setTexture(MARTELLOTexture);
+    martello.setTexture(MARTELLOTexture);
     
     //
     //  Spugna
@@ -390,8 +541,6 @@ int main()
 
     spongebob.setTexture(spongebobTexture);
 	
-
-
     //
     //  Font Scritte
     //
@@ -410,14 +559,15 @@ int main()
     {   
         sf::Event event;
 
-        window.clear();
+        window.clear(sf::Color(48, 48, 48));
 
         // Carico Prossima Mappa.
         if (defaultMap.riparazioni == defaultMap.riparazioniTot)
             defaultMap = loadNextMap();
 
-        // Coperture.
+        // Copertura Superiore.
         window.draw(cop0);
+        // Copertura Inferiore.
         window.draw(cop1);
 
         // Mappa.
@@ -426,15 +576,15 @@ int main()
         drawToolBar(window);
 		
         // Oggetti.
-        wrench.setPosition(64 + 256+ 0 * 64, 610);
-        scotch.setPosition(64 + 256 + 1 * 64, 610);
-        MARTELL.setPosition(64 + 256 + 2 * 64, 610);
-        spongebob.setPosition(64 + 256 + 3 * 64, 610);
-		window.draw(wrench);
+        spongebob.setPosition(320 + 0 * 64, 610);
+        scotch.setPosition(320 + 1 * 64, 610);
+        martello.setPosition(320 + 2 * 64, 610);
+        wrench.setPosition(320 + 3 * 64, 610);
+        window.draw(spongebob);
 		window.draw(scotch);
-		window.draw(MARTELL);
-		window.draw(spongebob);
-	
+		window.draw(martello);
+        window.draw(wrench);
+
         //  Player.
         window.draw(player);
         // Testo.
@@ -512,10 +662,13 @@ int main()
                     playerTexture.loadFromFile("assets\\elon_a.png");
                     player.setTexture(playerTexture);
 
-                    if (canMove(playerX - 1, playerY, defaultMap))
-                        playerX -= 1;
-
-                    dir = LEFT;
+                    if (dir != LEFT)
+                        dir = LEFT;
+                    else
+                    {
+                        if (canMove(playerX - 1, playerY, defaultMap))
+                            playerX -= 1;
+                    }
 
                     break;
 
@@ -524,11 +677,14 @@ int main()
                     playerTexture.loadFromFile("assets\\elon_d.png");
                     player.setTexture(playerTexture);
 
-                    if (canMove(playerX + 1, playerY, defaultMap))
-                        playerX += 1;
-
-                    dir = RIGHT;
-
+                    if (dir != RIGHT)
+                        dir = RIGHT;
+                    else
+                    {
+                        if (canMove(playerX + 1, playerY, defaultMap))
+                            playerX += 1;
+                    }
+ 
                     break;
 
                     //
@@ -536,19 +692,27 @@ int main()
                     //
 
                 case sf::Keyboard::Num1:
-                    selectedTool = 0;
+                    if (tools[0])
+                        selectedTool = 0;
+
                     break;
 
                 case sf::Keyboard::Num2:
-                    selectedTool = 1;
+                    if (tools[1])
+                        selectedTool = 1;
+
                     break;
 
                 case sf::Keyboard::Num3:
-                    selectedTool = 2;
+                    if (tools[2])
+                        selectedTool = 2;
+
                     break;
 
                 case sf::Keyboard::Num4:
-                    selectedTool = 3;
+                    if (tools[3])
+                        selectedTool = 3;
+
                     break;
 
                     //
