@@ -482,10 +482,13 @@ int main()
                     playerTexture.loadFromFile("assets\\elon_w.png");
                     player.setTexture(playerTexture);
 
-                    if (canMove(playerX, playerY - 1, defaultMap))
-                        playerY -= 1;
-
-                    dir = NORTH;
+                    if (dir != NORTH)
+                        dir = NORTH;
+                    else
+                    {
+                        if (canMove(playerX, playerY - 1, defaultMap))
+                            playerY -= 1;
+                    }
 
                     break;
 
@@ -494,10 +497,13 @@ int main()
                     playerTexture.loadFromFile("assets\\elon_def.png");
                     player.setTexture(playerTexture);
 
-                    if (canMove(playerX, playerY + 1, defaultMap))
-                        playerY += 1;
-
-                    dir = SOUTH;
+                    if (dir != SOUTH)
+                        dir = SOUTH;
+                    else
+                    {
+                        if (canMove(playerX, playerY + 1, defaultMap))
+                            playerY += 1;
+                    }
 
                     break;
 
