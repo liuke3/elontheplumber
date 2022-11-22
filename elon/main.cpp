@@ -276,8 +276,6 @@ int main()
                 // Calcolo Coordinata Y Relativa.
                 int y = sf::Mouse::getPosition(window).y;
 
-                cout << x << " " << y << endl;
-
                 if (x >= 291 && x <= 584 && y <= 390 && y >= 290)
                 {
                     game = true;
