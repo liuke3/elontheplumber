@@ -40,6 +40,8 @@ using namespace sf;
 
 #define TEXTURE             "assets\\texture.png"
 
+#define VUOTO_TEXTURE       "assets\\vuoto.png"
+
 #define VALVOLA     1
 
 #define CESSO       2
@@ -74,6 +76,9 @@ using namespace sf;
 #define LAVANDINO_CHIAVE    60
 #define LAVANDINO_NASTRO    61
 #define LAVANDINO_MARTELLO  62
+
+
+#define SEVOGLIO            104
 
 struct MAP
 {
@@ -282,13 +287,11 @@ void drawMap(MAP map, RenderWindow &window)
     muroTexture.loadFromFile(map.muro);
     muro.setTexture(muroTexture);
 
-    // Muro Brutto.
-    sf::Sprite murobrutto;
-    sf::Texture murobruttoTexture;
-
     // Vuoto.
-    sf::RectangleShape vuoto;
-    vuoto.setFillColor(sf::Color::Black);
+    sf::Sprite vuoto;
+    sf::Texture vuotoTexture;
+    vuotoTexture.loadFromFile(VUOTO_TEXTURE);
+    vuoto.setTexture(vuotoTexture);
 
     // Allagato.
     sf::Sprite allagato;
