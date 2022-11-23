@@ -34,7 +34,7 @@ using namespace sf;
 #define VALVOLA2            "assets\\valvola2.png"
 #define VASCA_OK            "assets\\vasca.png"
 #define VASCA_ROTTO         "assets\\vasca_rotto.png"
-#define CESSO_OK             "assets\\cesso.png"
+#define CESSO_OK            "assets\\cesso.png"
 #define CESSO_ROTTO         "assets\\cesso_rotto.png"
 #define DOCCIA_OK           "assets\\doccia.png"
 #define DOCCIA_ROTTO        "assets\\doccia_rotto.png"
@@ -188,14 +188,18 @@ MAP generateDefaultMap()
     };
 
     // Imposto Numero Oggetti.
-    t.objCounter = 2;
+    t.objCounter = 7;
 
     // Imposto Oggetti.
     t.obj = new OBJ[t.objCounter]{
         OBJ{ true, VALVOLA, 9, 1 },
-        OBJ{ true, CESSO, 1, 2},
+        OBJ{ true, CESSO, 1, 2 },
+        OBJ{ false, VASCA, 4, 2 },
+        OBJ{ true, BIDET, 5, 6 },
+        OBJ{ true, DOCCIA, 6, 6 },
+        OBJ{ true, LAVANDINO, 2, 2},
+        OBJ{ true, PORTELLO, 0, 4},
     };
-
 
     return t;
 }
@@ -304,7 +308,14 @@ void drawMap(MAP map, RenderWindow &window)
             default:
                 break;
             }
+        }
+    }
 
+    // Disegno Oggetti.
+    for (int y = 0; y < 8; y++)
+    {
+        for (int x = 0; x < 12; x++)
+        {
             obj.setPosition((x + 1) * 64, (y + 1) * 64);
 
             OBJ tempObj = quiOggetto(x, y, map);
@@ -318,38 +329,47 @@ void drawMap(MAP map, RenderWindow &window)
                 else
                     objTexture.loadFromFile(VALVOLA2);
 
-                obj.setTexture(objTexture);
+                obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;
 
-            case CESSO:          
+            case CESSO:
                 if (tempObj.rotto)
                     objTexture.loadFromFile(CESSO_ROTTO);
                 else
                     objTexture.loadFromFile(CESSO_OK);
 
-                obj.setTexture(objTexture);
+                obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;
 
             case VASCA:
-                //objTexture.loadFromFile(VASCA_OK);
-                objTexture.loadFromFile(TEXTURE);
-                obj.setTexture(objTexture);
+                if (tempObj.rotto)
+                    objTexture.loadFromFile(VASCA_ROTTO);
+                else
+                    objTexture.loadFromFile(VASCA_OK);
+
+                obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;
 
             case DOCCIA:
-                //objTexture.loadFromFile(DOCCIA_OK);
-                objTexture.loadFromFile(TEXTURE);
-                obj.setTexture(objTexture);
+                if (tempObj.rotto)
+                    objTexture.loadFromFile(DOCCIA_ROTTO);
+                else
+                    objTexture.loadFromFile(DOCCIA_OK);
+
+                obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;
 
             case BIDET:
-                //objTexture.loadFromFile(BIDET_OK);
-                objTexture.loadFromFile(TEXTURE);
-                obj.setTexture(objTexture);
+                if (tempObj.rotto)
+                    objTexture.loadFromFile(BIDET_ROTTO);
+                else
+                    objTexture.loadFromFile(BIDET_OK);
+
+                obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;
 
@@ -359,7 +379,7 @@ void drawMap(MAP map, RenderWindow &window)
                 else
                     objTexture.loadFromFile(LAVANDINO_OK);
 
-                obj.setTexture(objTexture);
+                obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;
 
@@ -369,7 +389,7 @@ void drawMap(MAP map, RenderWindow &window)
                 else
                     objTexture.loadFromFile(PORTELLO_OK);
 
-                obj.setTexture(objTexture);
+                obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;
 
