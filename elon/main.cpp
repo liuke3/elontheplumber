@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-
+#include <SFML/Audio.hpp>
 #include "map.hpp"
 
 using namespace std;
@@ -93,6 +93,8 @@ bool canMove(int playerX, int playerY, MAP map)
 {
     return (!evaluateCol(map.col[playerY - 1], playerX));
 }
+
+
 
 bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
 {
@@ -399,15 +401,44 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(896, 800), "Elon the Plumber");
 
-    //
     //menu
     sf::Sprite menu;
     sf::Texture menuTexture;
     menuTexture.loadFromFile("assets\\menu.png");
     menu.setTexture(menuTexture);
     menu.setPosition(0, 30);
-	
+
+    //tasto gioca
+    bool tastogioca = false;
+    sf::Sprite tasto_gioca;
+    sf::Texture tasto_giocaTexture;
+    tasto_giocaTexture.loadFromFile("assets\\tasto_gioca.png");
+    tasto_gioca.setTexture(tasto_giocaTexture);
+    tasto_gioca.setPosition(340, 368);
+
+    //tasto tasti
+    bool tastotasti = false;
+    sf::Sprite tasto_tasti;
+    sf::Texture tasto_tastiTexture;
+    tasto_tastiTexture.loadFromFile("assets\\tasto_tasti.png");
+    tasto_tasti.setTexture(tasto_tastiTexture);
+    tasto_tasti.setPosition(338, 496);
+
+    //tasto esci
+    bool tastoesci = false;
+    sf::Sprite tasto_esci;
+    sf::Texture tasto_esciTexture;
+    tasto_esciTexture.loadFromFile("assets\\tasto_esci.png");
+    tasto_esci.setTexture(tasto_esciTexture);
+    tasto_esci.setPosition(338, 640);
+
     bool game = false;
+
+    int mx, my;
+    //musica menu
+    sf::Music musica;
+    musica.openFromFile("assets\\menu_music.wav");
+    musica.play();
 
     while (window.isOpen())
     {
@@ -416,42 +447,84 @@ int main()
         window.clear();
 
         window.draw(menu);
-		
+
+        if (tastogioca)
+        {
+            window.draw(tasto_gioca);
+        }
+        if (tastotasti)
+        {
+            window.draw(tasto_tasti);
+        }
+        if (tastoesci)
+        {
+            window.draw(tasto_esci);
+        }
+
+
+
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            mx = sf::Mouse::getPosition(window).x;
+            my = sf::Mouse::getPosition(window).y;
+
+            if (event.type == sf::Event::Closed) {
                 window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed)
+            }
+            else if (event.type == sf::Event::MouseButtonPressed)
             {
-                // Calcolo Coordinata X Relativa.
-                int x = sf::Mouse::getPosition(window).x;
-                // Calcolo Coordinata Y Relativa.
-                int y = sf::Mouse::getPosition(window).y;
-
-                if (x >= 291 && x <= 584 && y <= 390 && y >= 290)
+                if (mx >= 342 && mx <= 574 && my <= 469 && my >= 372)
                 {
                     game = true;
                     break;
                 }
-                else if (x >= 293 && x <= 587 && y >= 466 && y <= 540)
+                else if (mx >= 342 && mx <= 574 && my >= 500 && my <= 596)
                 {
                     cout << "tasti" << endl;
-                    
                 }
-                else if (x >= 291 && x <= 584 && y >= 615 && y <= 710)
+                else if (mx >= 342 && mx <= 574 && my >= 644 && my <= 742)
                 {
                     return 0;
+                }
+
+            }
+            else if (event.type == sf::Event::MouseMoved)
+            {
+                if (mx >= 342 && mx <= 574 && my <= 469 && my >= 372)
+                {
+                    tastogioca = true;
+                    tastotasti = false;
+                    tastoesci = false;
+                }
+                else if (mx >= 342 && mx <= 574 && my >= 500 && my <= 596)
+                {
+                    tastotasti = true;
+                    tastogioca = false;
+                    tastoesci = false;
+                }
+                else if (mx >= 342 && mx <= 574 && my >= 644 && my <= 742)
+                {
+                    tastoesci = true;
+                    tastotasti = false;
+                    tastogioca = false;
+                }
+                else
+                {
+                    tastogioca = false;
+                    tastotasti = false;
+                    tastoesci = false;
                 }
             }
         }
 
-		window.display();
+        window.display();
 
         if (game == true)
             break;
     }
 
+    musica.stop();
     //
     // Player
     //
@@ -552,8 +625,19 @@ int main()
     text.setString("");
     text.setCharacterSize(18);
     text.setPosition(32, 720);
+    //passi
+    bool footstep = true;
 
-
+    sf::SoundBuffer buffer;
+    buffer.loadFromFile("assets\\footstep1.wav");
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+    sound.setVolume(25.f);
+    //musica gioco
+    sf::Music musica_gioco;
+    musica_gioco.openFromFile("assets\\game_music.wav");
+    musica_gioco.play();
+    musica_gioco.setLoop(true);
 
     while (window.isOpen())
     {   
@@ -569,7 +653,6 @@ int main()
         window.draw(cop0);
         // Copertura Inferiore.
         window.draw(cop1);
-
         // Mappa.
         drawMap(defaultMap, window);
         // ToolBar.
@@ -599,10 +682,11 @@ int main()
 
             if (event.type == sf::Event::Closed)
                 window.close();
-
             //
             //  Input Mouse.
             //
+
+			
 
             if (event.type == sf::Event::MouseButtonPressed)
             {
@@ -639,7 +723,17 @@ int main()
                         if (canMove(playerX, playerY - 1, defaultMap))
                             playerY -= 1;
                     }
-
+                    sound.stop();
+                    if (footstep) {
+                        buffer.loadFromFile("assets\\footstep1.wav");
+                        footstep = false;
+                    }
+                    else {
+						buffer.loadFromFile("assets\\footstep2.wav");
+						footstep = true;
+                    }
+                    sound.play();
+					
                     break;
 
                 case sf::Keyboard::S:
@@ -654,6 +748,16 @@ int main()
                         if (canMove(playerX, playerY + 1, defaultMap))
                             playerY += 1;
                     }
+                    sound.stop();
+                    if (footstep) {
+                        buffer.loadFromFile("assets\\footstep1.wav");
+                        footstep = false;
+                    }
+                    else {
+                        buffer.loadFromFile("assets\\footstep2.wav");
+                        footstep = true;
+                    }
+                    sound.play();
 
                     break;
 
@@ -669,6 +773,16 @@ int main()
                         if (canMove(playerX - 1, playerY, defaultMap))
                             playerX -= 1;
                     }
+                    sound.stop();
+                    if (footstep) {
+                        buffer.loadFromFile("assets\\footstep1.wav");
+                        footstep = false;
+                    }
+                    else {
+                        buffer.loadFromFile("assets\\footstep2.wav");
+                        footstep = true;
+                    }
+                    sound.play();
 
                     break;
 
@@ -684,7 +798,17 @@ int main()
                         if (canMove(playerX + 1, playerY, defaultMap))
                             playerX += 1;
                     }
- 
+                    sound.stop();
+                    if (footstep) {
+                        buffer.loadFromFile("assets\\footstep1.wav");
+                        footstep = false;
+                    }
+                    else {
+                        buffer.loadFromFile("assets\\footstep2.wav");
+                        footstep = true;
+                    }
+                    sound.play();
+					
                     break;
 
                     //
