@@ -85,34 +85,53 @@ MAP loadNextMap(RenderWindow &wd)
 {
     MAP t;
 
+    //
+    //  Next Map
+    //
+
     currentMapIndex++;
 
+    sf::Sprite coso;
+    sf::Texture cosoTexture;
 
+    coso.setPosition(40, 180);
 
+    string message = "Hai Sbloccato: ";
 
     switch (currentMapIndex)
     {
-    case 1:
+    case 0:
         tools[SPUGNA] = true;
+        cosoTexture.loadFromFile("assets\\spongebob.png");
+        coso.setTexture(cosoTexture);
+        message += "\nSpugna";
         break;
 
     case 2:
         tools[NASTRO] = true;
+        cosoTexture.loadFromFile("assets\\scotch.png");
+        coso.setTexture(cosoTexture);
+        message += "\nNastro Adesivo";
         break;
 
     case 4:
         tools[MARTELLO] = true;
+        cosoTexture.loadFromFile("assets\\hammer.png");
+        coso.setTexture(cosoTexture);
+        message += "\nMartello";
         break;
     
     case 6:
         tools[CHIAVE] = true;
+        cosoTexture.loadFromFile("assets\\wrench.png");
+        coso.setTexture(cosoTexture);
+        message += "\nChiave Inglese";
         break;
 
     default:
         break;
     }
 
-    cout << "LIVELLO COMPLETATO!" << endl;
 
     bool continue_ = true;
 
@@ -127,12 +146,38 @@ MAP loadNextMap(RenderWindow &wd)
         sf::Text text;
         text.setFont(font);
         text.setString("Livello Completato");
-        text.setCharacterSize(18);
-        text.setPosition(0, 0);
+        text.setCharacterSize(48);
+        text.setPosition(40, 40);
 
         wd.draw(text);
 
-        text.setPosition(0, 24);
+        if (coso.getTexture() != NULL)
+        {
+            wd.draw(coso);
+            text.setString(message);
+            text.setCharacterSize(24);
+            text.setPosition(40, 120);
+            wd.draw(text);
+        }
+
+        // non ultimo livello
+
+        if (currentMapIndex != 8)
+        {
+            text.setString("Premi un tasto per continuare...");
+            text.setCharacterSize(24);
+            text.setPosition(40, 740);
+            wd.draw(text);
+        }
+        // ultimo livello
+        else
+        {
+            text.setString("Premi un tasto per terminare...");
+            text.setCharacterSize(24);
+            text.setPosition(40, 740);
+            wd.draw(text);
+        }
+
 
         while (wd.pollEvent(event))
         {
@@ -148,7 +193,7 @@ MAP loadNextMap(RenderWindow &wd)
             break;
     }
 
-    if (currentMapIndex > 9)
+    if (currentMapIndex > 8)
         return generateDefaultMap();
     else
         return generateDefaultMap();
@@ -819,7 +864,7 @@ int main()
         {
             defaultMap = loadNextMap(window);
 
-            if (currentMapIndex > 9)
+            if (currentMapIndex == 8)
             {
                 while (true);
             }
