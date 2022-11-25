@@ -406,7 +406,7 @@ int main()
     sf::Texture menuTexture;
     menuTexture.loadFromFile("assets\\menu.png");
     menu.setTexture(menuTexture);
-    menu.setPosition(0, 30);
+    menu.setPosition(0, 0);
 
     //tasto gioca
     bool tastogioca = false;
@@ -414,7 +414,7 @@ int main()
     sf::Texture tasto_giocaTexture;
     tasto_giocaTexture.loadFromFile("assets\\tasto_gioca.png");
     tasto_gioca.setTexture(tasto_giocaTexture);
-    tasto_gioca.setPosition(340, 368);
+    tasto_gioca.setPosition(340, 338);
 
     //tasto tasti
     bool tastotasti = false;
@@ -422,7 +422,7 @@ int main()
     sf::Texture tasto_tastiTexture;
     tasto_tastiTexture.loadFromFile("assets\\tasto_tasti.png");
     tasto_tasti.setTexture(tasto_tastiTexture);
-    tasto_tasti.setPosition(338, 496);
+    tasto_tasti.setPosition(338, 466);
 
     //tasto esci
     bool tastoesci = false;
@@ -430,7 +430,7 @@ int main()
     sf::Texture tasto_esciTexture;
     tasto_esciTexture.loadFromFile("assets\\tasto_esci.png");
     tasto_esci.setTexture(tasto_esciTexture);
-    tasto_esci.setPosition(338, 640);
+    tasto_esci.setPosition(338, 610);
 
     bool game = false;
 
