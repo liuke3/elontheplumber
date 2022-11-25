@@ -81,13 +81,9 @@ int dir = 0;
 
 
 
-MAP loadNextMap(RenderWindow &wd)
+MAP loadNextMap(RenderWindow& wd)
 {
     MAP t;
-
-    //
-    //  Next Map
-    //
 
     currentMapIndex++;
 
@@ -120,7 +116,7 @@ MAP loadNextMap(RenderWindow &wd)
         coso.setTexture(cosoTexture);
         message += "\nMartello";
         break;
-    
+
     case 6:
         tools[CHIAVE] = true;
         cosoTexture.loadFromFile("assets\\wrench.png");
@@ -205,7 +201,7 @@ MAP loadNextMap(RenderWindow &wd)
 //  Minigiochi
 //
 
-void nastroGame(OBJ obj, Window &wd)
+void nastroGame(OBJ obj, Window& wd)
 {
     if (!obj.rotto)
         return;
@@ -282,7 +278,7 @@ bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
     return false;
 }
 
-bool interagisci(int playerX, int playerY, int dir, MAP &map, Window &wd)
+bool interagisci(int playerX, int playerY, int dir, MAP& map, Window& wd)
 {
     // Controllo.
     if (playerY - 1 < 0 || playerY + 1 > 7 ||
@@ -382,7 +378,7 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map, Window &wd)
         if (selectedTool == NASTRO && (quiOggetto(playerX - 1, playerY, map).type == CESSO ||
             quiOggetto(playerX - 1, playerY, map).type == VASCA))
         {
-            nastroGame(quiOggetto(playerX - 1, playerY , map), wd);
+            nastroGame(quiOggetto(playerX - 1, playerY, map), wd);
             map.obj[indexOggetto(playerX - 1, playerY, map)].rotto = false;
             map.riparazioni++;
         }
@@ -460,7 +456,7 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map, Window &wd)
 
 
 
-string* objAbout1 = new string[7] {
+string* objAbout1 = new string[7]{
     "Valvola Aperta\n Richiede Mani",
     "Cesso Rotto\n Richiede Nastro Adesivo",
     "Vasca Incrinata\n Richiede Nastro Adesivo",
@@ -540,9 +536,9 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
 
 
 
-void drawToolBar(sf::RenderWindow &window)
+void drawToolBar(sf::RenderWindow& window)
 {
-    sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));   
+    sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
     sf::Color redondi;
     redondi = sf::Color(100, 100, 100, 100);
     shape.setFillColor(redondi);
@@ -629,22 +625,33 @@ int main()
     tasto_esci.setPosition(338, 610);
 
     bool game = false;
-
+    // menu tasti
+    bool tasti_menu = true;
+    bool tastoindietro = false;
+    //
     int mx, my;
     //musica menu
     sf::Music musica;
     musica.openFromFile("assets\\menu_music.wav");
+    musica.setLoop(true);
     musica.play();
+    //tasto selezionato
+    sf::SoundBuffer buffer1;
+    buffer1.loadFromFile("assets\\tasto_selezionato.wav");
+    sf::Sound sound1;
+    sound1.setBuffer(buffer1);
+    sound1.setVolume(25.f);
 
     // elementi x window resize per evitare lo strecth delle texture del fullscreen
     sf::Vector2u size;
     unsigned int width;
     unsigned int height;
     //
-
     while (window.isOpen())
     {
         sf::Event event;
+
+        tasti_menu = false;
 
         window.clear();
 
@@ -670,7 +677,7 @@ int main()
             mx = sf::Mouse::getPosition(window).x;
             my = sf::Mouse::getPosition(window).y;
 
-            
+
             size = window.getSize();
             width = size.x;
             height = size.y;
@@ -678,10 +685,10 @@ int main()
 
             if (size.x != 896 || size.y != 800)
             {
-                window.setSize(sf::Vector2u(896,800));
+                window.setSize(sf::Vector2u(896, 800));
 
             }
-            
+
             if (event.type == sf::Event::Closed) {
                 window.close();
 
@@ -690,18 +697,82 @@ int main()
             {
                 if (mx >= 342 && mx <= 574 && my <= 439 && my >= 342)
                 {
+                    sound1.stop();
                     game = true;
+                    sound1.play();
                     break;
                 }
                 else if (mx >= 342 && mx <= 574 && my >= 470 && my <= 566)
                 {
-                    cout << "tasti" << endl;
-                }
-                else if (mx >= 342 && mx <= 574 && my >= 614 && my <= 712)
-                {
-                    return 0;
-                }
+                    sound1.stop();
+                    sound1.play();
+                    //menu tasti
+                    sf::Sprite menu_tasti;
+                    sf::Texture menu_tastiTexture;
+                    menu_tastiTexture.loadFromFile("assets\\menu_tasti.png");
+                    menu_tasti.setTexture(menu_tastiTexture);
+                    menu_tasti.setPosition(0, 0);
+                    //tasto indietro
+                    sf::Sprite tasto_indietro;
+                    sf::Texture tasto_indietroTexture;
+                    tasto_indietroTexture.loadFromFile("assets\\tasto_indietro.png");
+                    tasto_indietro.setTexture(tasto_indietroTexture);
+                    tasto_indietro.setPosition(314, 718);
+                    sf::Event event;
+                    while (window.isOpen())
+                    {
+                        window.clear();
 
+                        sf::Event event;
+
+                        window.draw(menu_tasti);
+
+                        if (tastoindietro == true)
+                        {
+                            window.draw(tasto_indietro);
+                        }
+
+                        while (window.pollEvent(event))
+                        {
+                            mx = sf::Mouse::getPosition(window).x;
+                            my = sf::Mouse::getPosition(window).y;
+
+                            if (event.type == sf::Event::Closed) {
+                                window.close();
+
+                            }
+
+                            if (event.type == sf::Event::MouseMoved)
+                            {
+                                if (mx >= 314 && mx <= 585 && my >= 718 && my <= 790)
+                                {
+
+                                    tastoindietro = true;
+
+                                }
+                                else {
+                                    tastoindietro = false;
+                                }
+                            }
+                            else if (event.type == sf::Event::MouseButtonPressed)
+                            {
+                                if (mx >= 314 && mx <= 585 && my >= 718 && my <= 790)
+                                {
+                                    tasti_menu = true;
+                                    sound1.play();
+                                    break;
+                                }
+                            }
+
+                        }
+                        window.display();
+                        if (tasti_menu == true)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else if (mx >= 342 && mx <= 574 && my >= 614 && my <= 712) return 0;
             }
             else if (event.type == sf::Event::MouseMoved)
             {
@@ -735,9 +806,10 @@ int main()
         window.display();
 
         if (game == true)
+        {
             break;
+        }
     }
-
     musica.stop();
     //
     // Player
@@ -773,65 +845,9 @@ int main()
     cop1.setPosition(0, 700);
 
     //
-    //  Wrench
-    //
-    
-    sf::Sprite wrench;
-    sf::Texture wrenchTexture;
-
-    if (tools[0] == true)
-        wrenchTexture.loadFromFile("assets\\wrench.png");
-    else
-        wrenchTexture.loadFromFile("assets\\wrench_discolored.png");
-
-    wrench.setTexture(wrenchTexture);
-
-    //
-    //  Scotch
-    //
-
-    sf::Sprite scotch;
-    sf::Texture scotchTexture;
-
-    if (tools[1] == true)
-        scotchTexture.loadFromFile("assets\\scotch.png");
-    else
-        scotchTexture.loadFromFile("assets\\scotch_discolored.png");
-
-    scotch.setTexture(scotchTexture);
-    
-    //
-    //  Martello
-    //
-    
-    sf::Sprite martello;
-    sf::Texture MARTELLOTexture;
-
-    if (tools[2] == true)
-        MARTELLOTexture.loadFromFile("assets\\hammer.png");
-    else
-        MARTELLOTexture.loadFromFile("assets\\hammer_discolored.png");
-
-    martello.setTexture(MARTELLOTexture);
-    
-    //
-    //  Spugna
-    //
-
-    sf::Sprite spongebob;
-    sf::Texture spongebobTexture;
-
-    if (tools[3] == true)
-        spongebobTexture.loadFromFile("assets\\spongebob.png");
-    else
-        spongebobTexture.loadFromFile("assets\\spongebob_discolored.png");
-
-    spongebob.setTexture(spongebobTexture);
-	
-    //
     //  Font Scritte
     //
-	
+
     sf::Font font;
     font.loadFromFile(FONT);
     sf::Text text;
@@ -854,7 +870,7 @@ int main()
     musica_gioco.setLoop(true);
 
     while (window.isOpen())
-    {   
+    {
         sf::Event event;
 
         window.clear(sf::Color(48, 48, 48));
@@ -864,7 +880,7 @@ int main()
         {
             defaultMap = loadNextMap(window);
 
-            if (currentMapIndex == 8)
+            if (currentMapIndex > 9)
             {
                 while (true);
             }
@@ -878,15 +894,72 @@ int main()
         drawMap(defaultMap, window);
         // ToolBar.
         drawToolBar(window);
-		
+
         // Oggetti.
+
+    //
+    //  Wrench
+    //
+
+        sf::Sprite wrench;
+        sf::Texture wrenchTexture;
+
+        if (tools[0] == true)
+            wrenchTexture.loadFromFile("assets\\wrench.png");
+        else
+            wrenchTexture.loadFromFile("assets\\wrench_discolored.png");
+
+        wrench.setTexture(wrenchTexture);
+
+        //
+        //  Scotch
+        //
+
+        sf::Sprite scotch;
+        sf::Texture scotchTexture;
+
+        if (tools[1] == true)
+            scotchTexture.loadFromFile("assets\\scotch.png");
+        else
+            scotchTexture.loadFromFile("assets\\scotch_discolored.png");
+
+        scotch.setTexture(scotchTexture);
+
+        //
+        //  Martello
+        //
+
+        sf::Sprite martello;
+        sf::Texture MARTELLOTexture;
+
+        if (tools[2] == true)
+            MARTELLOTexture.loadFromFile("assets\\hammer.png");
+        else
+            MARTELLOTexture.loadFromFile("assets\\hammer_discolored.png");
+
+        martello.setTexture(MARTELLOTexture);
+
+        //
+        //  Spugna
+        //
+
+        sf::Sprite spongebob;
+        sf::Texture spongebobTexture;
+
+        if (tools[3] == true)
+            spongebobTexture.loadFromFile("assets\\spongebob.png");
+        else
+            spongebobTexture.loadFromFile("assets\\spongebob_discolored.png");
+
+        spongebob.setTexture(spongebobTexture);
+
         spongebob.setPosition(320 + 0 * 64, 610);
         scotch.setPosition(320 + 1 * 64, 610);
         martello.setPosition(320 + 2 * 64, 610);
         wrench.setPosition(320 + 3 * 64, 610);
         window.draw(spongebob);
-		window.draw(scotch);
-		window.draw(martello);
+        window.draw(scotch);
+        window.draw(martello);
         window.draw(wrench);
 
         //  Player.
@@ -929,7 +1002,7 @@ int main()
 
                 text.setString(getAbout(x, y, defaultMap, window));
             }
-            
+
             //
             //  Input Tastiera.
             //
@@ -961,11 +1034,11 @@ int main()
                         footstep = false;
                     }
                     else {
-						buffer.loadFromFile("assets\\footstep2.wav");
-						footstep = true;
+                        buffer.loadFromFile("assets\\footstep2.wav");
+                        footstep = true;
                     }
                     sound.play();
-					
+
                     break;
 
                 case sf::Keyboard::S:
@@ -1040,7 +1113,7 @@ int main()
                         footstep = true;
                     }
                     sound.play();
-					
+
                     break;
 
                     //

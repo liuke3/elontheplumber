@@ -1,19 +1,20 @@
 ﻿  main.cpp
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(298,61): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(298,47): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(303,64): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(303,50): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(310,56): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(310,42): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(315,57): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(315,43): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(330,51): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\map.hpp(330,37): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\main.cpp(570,44): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\main.cpp(575,36): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\main.cpp(579,45): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\main.cpp(752,56): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\main.cpp(752,37): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\main.cpp(1115,68): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\lucap\Desktop\elontheplumber\elon\main.cpp(1115,49): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-  elon.vcxproj -> C:\Users\lucap\Desktop\elontheplumber\x64\Debug\elon.exe
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(298,61): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(298,47): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(303,64): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(303,50): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(310,56): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(310,42): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(315,57): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(315,43): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(330,51): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\map.hpp(330,37): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(566,44): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(571,36): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(575,45): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(824,56): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(824,37): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(1188,68): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(1188,49): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\elon\main.cpp(721,31): warning C4101: 'event': variabile locale senza riferimenti
+  elon.vcxproj -> C:\Users\Marco\Desktop\Elon the plumber clone\elontheplumber\x64\Debug\elon.exe
