@@ -440,6 +440,12 @@ int main()
     musica.openFromFile("assets\\menu_music.wav");
     musica.play();
 
+    // elementi x window resize per evitare lo strecth delle texture del fullscreen
+    sf::Vector2u size;
+    unsigned int width;
+    unsigned int height;
+    //
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -468,6 +474,18 @@ int main()
             mx = sf::Mouse::getPosition(window).x;
             my = sf::Mouse::getPosition(window).y;
 
+            
+            size = window.getSize();
+            width = size.x;
+            height = size.y;
+
+
+            if (size.x != 896 || size.y != 800)
+            {
+                window.setSize(sf::Vector2u(896,800));
+
+            }
+            
             if (event.type == sf::Event::Closed) {
                 window.close();
 
@@ -682,12 +700,21 @@ int main()
 
             if (event.type == sf::Event::Closed)
                 window.close();
+
+
+            //resize menu
+
+            size = window.getSize();
+            width = size.x;
+            height = size.y;
+
+            if (size.x != 896 || size.y != 800)
+            {
+                window.setSize(sf::Vector2u(896, 800));
+
+            }
             //
             //  Input Mouse.
-            //
-
-			
-
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 // Calcolo Coordinata X Relativa.
