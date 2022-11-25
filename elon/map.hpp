@@ -56,9 +56,16 @@ using namespace sf;
 
 struct OBJ
 {
+    // Stato Oggetto.
     bool rotto = false;
+
+    // Tipo Oggetto.
     int type;
+
+    // Coordinata X.
     short x;
+    
+    // Coordinata Y.
     short y;
 };
 
@@ -155,7 +162,7 @@ MAP generateDefaultMap()
     // Imposto Muro.
     t.muro = DEFAULT_MURO;
     // Imposto Riparazioni Totali Mappa.
-    t.riparazioniTot = 10;
+    t.riparazioniTot = 1;
     // Imposto Riparazioni Effettuate Mappa.
     t.riparazioni = 0;
     // Imposto Valvola.
@@ -188,17 +195,11 @@ MAP generateDefaultMap()
     };
 
     // Imposto Numero Oggetti.
-    t.objCounter = 7;
+    t.objCounter = 1;
 
     // Imposto Oggetti.
     t.obj = new OBJ[t.objCounter]{
         OBJ{ true, VALVOLA, 9, 1 },
-        OBJ{ true, CESSO, 1, 2 },
-        OBJ{ false, VASCA, 4, 2 },
-        OBJ{ true, BIDET, 5, 6 },
-        OBJ{ true, DOCCIA, 6, 6 },
-        OBJ{ true, LAVANDINO, 2, 2},
-        OBJ{ true, PORTELLO, 0, 4},
     };
 
     return t;
@@ -228,6 +229,16 @@ OBJ quiOggetto(short x, short y, MAP map)
             return map.obj[i];
 
     return e;
+}
+
+
+int indexOggetto(short x, short y, MAP map)
+{
+    for (int i = 0; i < map.objCounter; i++)
+        if (map.obj[i].x == x && map.obj[i].y == y)
+            return i;
+
+    return -1;
 }
 
 

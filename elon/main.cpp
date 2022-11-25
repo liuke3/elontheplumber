@@ -2,6 +2,25 @@
 #include <SFML/Audio.hpp>
 #include "map.hpp"
 
+
+
+/*
+
+mettere roba finestra nel while
+
+riparazione oggetti solo se valvola chiusa
+
+fare finestra fine coso bella
+
+"filmato introduttivo"
+
+"filmato deintroduttivo"
+
+
+*/
+
+
+
 using namespace std;
 using namespace sf;
 
@@ -48,6 +67,9 @@ string toolsAbout[4] = {
 
 
 
+//
+//  Giocatore
+//
 
 // Coordinata X Player.
 int playerX = 2;
@@ -59,11 +81,77 @@ int dir = 0;
 
 
 
-MAP loadNextMap()
+MAP loadNextMap(RenderWindow &wd)
 {
     MAP t;
 
-    return t;
+    currentMapIndex++;
+
+
+
+
+    switch (currentMapIndex)
+    {
+    case 1:
+        tools[SPUGNA] = true;
+        break;
+
+    case 2:
+        tools[NASTRO] = true;
+        break;
+
+    case 4:
+        tools[MARTELLO] = true;
+        break;
+    
+    case 6:
+        tools[CHIAVE] = true;
+        break;
+
+    default:
+        break;
+    }
+
+    cout << "LIVELLO COMPLETATO!" << endl;
+
+    bool continue_ = true;
+
+    while (wd.isOpen())
+    {
+        sf::Event event;
+
+        wd.clear();
+
+        sf::Font font;
+        font.loadFromFile(FONT);
+        sf::Text text;
+        text.setFont(font);
+        text.setString("Livello Completato");
+        text.setCharacterSize(18);
+        text.setPosition(0, 0);
+
+        wd.draw(text);
+
+        text.setPosition(0, 24);
+
+        while (wd.pollEvent(event))
+        {
+            if (event.type == sf::Event::KeyPressed)
+            {
+                continue_ = false;
+            }
+        }
+
+        wd.display();
+
+        if (!continue_)
+            break;
+    }
+
+    if (currentMapIndex > 9)
+        return generateDefaultMap();
+    else
+        return generateDefaultMap();
 }
 
 
@@ -72,19 +160,34 @@ MAP loadNextMap()
 //  Minigiochi
 //
 
-void nastroGame()
+void nastroGame(OBJ obj, Window &wd)
 {
+    if (!obj.rotto)
+        return;
+
     cout << "Nastro Game" << endl;
+
+    return;
 }
 
-void martelloGame()
+void martelloGame(OBJ obj, Window& wd)
 {
+    if (!obj.rotto)
+        return;
+
     cout << "Martello Game" << endl;
+
+    return;
 }
 
-void chiaveGame()
+void chiaveGame(OBJ obj, Window& wd)
 {
+    if (!obj.rotto)
+        return;
+
     cout << "Chiave Game" << endl;
+
+    return;
 }
 
 
@@ -98,7 +201,7 @@ bool canMove(int playerX, int playerY, MAP map)
 
 bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
 {
-    // Controllo
+    // Controllo.
     if (playerY - 1 < 0 || playerY + 1 > 7 ||
         playerX - 1 < 0 || playerX + 1 > 11)
         return false;
@@ -134,9 +237,9 @@ bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
     return false;
 }
 
-bool interagisci(int playerX, int playerY, int dir, MAP &map)
+bool interagisci(int playerX, int playerY, int dir, MAP &map, Window &wd)
 {
-    // Controllo
+    // Controllo.
     if (playerY - 1 < 0 || playerY + 1 > 7 ||
         playerX - 1 < 0 || playerX + 1 > 11)
         return false;
@@ -153,19 +256,31 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
             }
 
         // Nastro.
-        if (selectedTool == NASTRO && quiOggetto(playerX, playerY - 1, map).type == CESSO &&
-            quiOggetto(playerX, playerY - 1, map).type == VASCA)
-            nastroGame();
+        if (selectedTool == NASTRO && (quiOggetto(playerX, playerY - 1, map).type == CESSO ||
+            quiOggetto(playerX, playerY - 1, map).type == VASCA))
+        {
+            nastroGame(quiOggetto(playerX, playerY - 1, map), wd);
+            map.obj[indexOggetto(playerX, playerY - 1, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Martello.
-        if (selectedTool == MARTELLO && quiOggetto(playerX, playerY - 1, map).type == DOCCIA &&
-            quiOggetto(playerX, playerY - 1, map).type == BIDET)
-            martelloGame();
+        if (selectedTool == MARTELLO && (quiOggetto(playerX, playerY - 1, map).type == DOCCIA ||
+            quiOggetto(playerX, playerY - 1, map).type == BIDET))
+        {
+            martelloGame(quiOggetto(playerX, playerY - 1, map), wd);
+            map.obj[indexOggetto(playerX, playerY - 1, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Chiave.
-        if (selectedTool == CHIAVE && quiOggetto(playerX, playerY - 1, map).type == LAVANDINO &&
-            quiOggetto(playerX, playerY - 1, map).type == PORTELLO)
-            chiaveGame();
+        if (selectedTool == CHIAVE && (quiOggetto(playerX, playerY - 1, map).type == LAVANDINO ||
+            quiOggetto(playerX, playerY - 1, map).type == PORTELLO))
+        {
+            chiaveGame(quiOggetto(playerX, playerY - 1, map), wd);
+            map.obj[indexOggetto(playerX, playerY - 1, map)].rotto = false;
+            map.riparazioni++;
+        }
     }
 
     // Sud.
@@ -180,19 +295,31 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
             }
 
         // Nastro.
-        if (selectedTool == NASTRO && quiOggetto(playerX, playerY + 1, map).type == CESSO &&
-            quiOggetto(playerX, playerY + 1, map).type == VASCA)
-            nastroGame();
+        if (selectedTool == NASTRO && (quiOggetto(playerX, playerY + 1, map).type == CESSO ||
+            quiOggetto(playerX, playerY + 1, map).type == VASCA))
+        {
+            nastroGame(quiOggetto(playerX, playerY + 1, map), wd);
+            map.obj[indexOggetto(playerX, playerY + 1, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Martello.
-        if (selectedTool == MARTELLO && quiOggetto(playerX, playerY + 1, map).type == DOCCIA &&
-            quiOggetto(playerX, playerY + 1, map).type == BIDET)
-            martelloGame();
+        if (selectedTool == MARTELLO && (quiOggetto(playerX, playerY + 1, map).type == DOCCIA ||
+            quiOggetto(playerX, playerY + 1, map).type == BIDET))
+        {
+            martelloGame(quiOggetto(playerX, playerY + 1, map), wd);
+            map.obj[indexOggetto(playerX, playerY + 1, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Chiave.
-        if (selectedTool == CHIAVE && quiOggetto(playerX, playerY + 1, map).type == LAVANDINO &&
-            quiOggetto(playerX, playerY + 1, map).type == PORTELLO)
-            chiaveGame();
+        if (selectedTool == CHIAVE && (quiOggetto(playerX, playerY + 1, map).type == LAVANDINO ||
+            quiOggetto(playerX, playerY + 1, map).type == PORTELLO))
+        {
+            chiaveGame(quiOggetto(playerX, playerY + 1, map), wd);
+            map.obj[indexOggetto(playerX, playerY + 1, map)].rotto = false;
+            map.riparazioni++;
+        }
     }
 
     // Sinsitra.
@@ -207,19 +334,31 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
             }
 
         // Nastro.
-        if (selectedTool == NASTRO && quiOggetto(playerX - 1, playerY, map).type == CESSO &&
-            quiOggetto(playerX - 1, playerY, map).type == VASCA)
-            nastroGame();
+        if (selectedTool == NASTRO && (quiOggetto(playerX - 1, playerY, map).type == CESSO ||
+            quiOggetto(playerX - 1, playerY, map).type == VASCA))
+        {
+            nastroGame(quiOggetto(playerX - 1, playerY , map), wd);
+            map.obj[indexOggetto(playerX - 1, playerY, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Martello.
-        if (selectedTool == MARTELLO && quiOggetto(playerX - 1, playerY, map).type == DOCCIA &&
-            quiOggetto(playerX - 1, playerY, map).type == BIDET)
-            martelloGame();
+        if (selectedTool == MARTELLO && (quiOggetto(playerX - 1, playerY, map).type == DOCCIA ||
+            quiOggetto(playerX - 1, playerY, map).type == BIDET))
+        {
+            martelloGame(quiOggetto(playerX - 1, playerY, map), wd);
+            map.obj[indexOggetto(playerX - 1, playerY, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Chiave.
-        if (selectedTool == CHIAVE && quiOggetto(playerX - 1, playerY, map).type == LAVANDINO &&
-            quiOggetto(playerX - 1, playerY, map).type == PORTELLO)
-            chiaveGame();
+        if (selectedTool == CHIAVE && (quiOggetto(playerX - 1, playerY, map).type == LAVANDINO ||
+            quiOggetto(playerX - 1, playerY, map).type == PORTELLO))
+        {
+            chiaveGame(quiOggetto(playerX - 1, playerY, map), wd);
+            map.obj[indexOggetto(playerX - 1, playerY, map)].rotto = false;
+            map.riparazioni++;
+        }
     }
 
     // Destra.
@@ -234,19 +373,31 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
             }
 
         // Nastro.
-        if (selectedTool == NASTRO && quiOggetto(playerX + 1, playerY, map).type == CESSO &&
-            quiOggetto(playerX + 1, playerY, map).type == VASCA)
-            nastroGame();
+        if (selectedTool == NASTRO && (quiOggetto(playerX + 1, playerY, map).type == CESSO ||
+            quiOggetto(playerX + 1, playerY, map).type == VASCA))
+        {
+            nastroGame(quiOggetto(playerX + 1, playerY, map), wd);
+            map.obj[indexOggetto(playerX + 1, playerY, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Martello.
-        if (selectedTool == MARTELLO && quiOggetto(playerX + 1, playerY, map).type == DOCCIA &&
-            quiOggetto(playerX + 1, playerY, map).type == BIDET)
-            martelloGame();
+        if (selectedTool == MARTELLO && (quiOggetto(playerX + 1, playerY, map).type == DOCCIA ||
+            quiOggetto(playerX + 1, playerY, map).type == BIDET))
+        {
+            martelloGame(quiOggetto(playerX + 1, playerY, map), wd);
+            map.obj[indexOggetto(playerX + 1, playerY, map)].rotto = false;
+            map.riparazioni++;
+        }
 
         // Chiave.
-        if (selectedTool == CHIAVE && quiOggetto(playerX + 1, playerY, map).type == LAVANDINO &&
-            quiOggetto(playerX + 1, playerY, map).type == PORTELLO)
-            chiaveGame();
+        if (selectedTool == CHIAVE && (quiOggetto(playerX + 1, playerY, map).type == LAVANDINO ||
+            quiOggetto(playerX + 1, playerY, map).type == PORTELLO))
+        {
+            chiaveGame(quiOggetto(playerX + 1, playerY, map), wd);
+            map.obj[indexOggetto(playerX + 1, playerY, map)].rotto = false;
+            map.riparazioni++;
+        }
     }
 
     // Spugna.
@@ -265,13 +416,13 @@ bool interagisci(int playerX, int playerY, int dir, MAP &map)
 
 
 string* objAbout1 = new string[7] {
-    "Valvola Aperta",
-    "Cesso Rotto",
-    "Vasca Incrinata",
-    "Doccia Sfasciata",
-    "Bidet Bombardato",
-    "Lavandino Innondato",
-    "Portello Dissanguato",
+    "Valvola Aperta\n Richiede Mani",
+    "Cesso Rotto\n Richiede Nastro Adesivo",
+    "Vasca Incrinata\n Richiede Nastro Adesivo",
+    "Doccia Sfasciata\n Richiede Martello",
+    "Bidet Bombardato\n Richiede Martello",
+    "Lavandino Innondato\n Richiede Chiave",
+    "Portello Devastato\n Richiede Chiave",
 };
 
 string* objAbout2 = new string[7]{
@@ -647,7 +798,14 @@ int main()
 
         // Carico Prossima Mappa.
         if (defaultMap.riparazioni == defaultMap.riparazioniTot)
-            defaultMap = loadNextMap();
+        {
+            defaultMap = loadNextMap(window);
+
+            if (currentMapIndex > 9)
+            {
+                while (true);
+            }
+        }
 
         // Copertura Superiore.
         window.draw(cop0);
@@ -816,26 +974,50 @@ int main()
                     //
 
                 case sf::Keyboard::Num1:
+                    // Controllo se Oggetto è Attivo.
                     if (tools[0])
+                    {
+                        // Imposto Selezione.
                         selectedTool = 0;
+                        // Imposto Testo,
+                        text.setString(toolsAbout[0]);
+                    }
 
                     break;
 
                 case sf::Keyboard::Num2:
+                    // Controllo se Oggetto è Attivo.
                     if (tools[1])
+                    {
+                        // Imposto Selezione.
                         selectedTool = 1;
+                        // Imposto Testo,
+                        text.setString(toolsAbout[1]);
+                    }
 
                     break;
 
                 case sf::Keyboard::Num3:
+                    // Controllo se Oggetto è Attivo.
                     if (tools[2])
+                    {
+                        // Imposto Selezione.
                         selectedTool = 2;
+                        // Imposto Testo,
+                        text.setString(toolsAbout[2]);
+                    }
 
                     break;
 
                 case sf::Keyboard::Num4:
+                    // Controllo se Oggetto è Attivo.
                     if (tools[3])
+                    {
+                        // Imposto Selezione.
                         selectedTool = 3;
+                        // Imposto Testo,
+                        text.setString(toolsAbout[3]);
+                    }
 
                     break;
 
@@ -846,7 +1028,9 @@ int main()
                 case sf::Keyboard::E:
                 case sf::Keyboard::Space:
                     if (hoToccatoOggetto(playerX, playerY, dir, defaultMap))
-                        interagisci(playerX, playerY, dir, defaultMap);
+                    {
+                        interagisci(playerX, playerY, dir, defaultMap, window);
+                    }
 
                     break;
 
