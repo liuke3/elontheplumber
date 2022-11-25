@@ -14,6 +14,6 @@ C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(379,36): warnin
 C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(383,45): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
 C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(556,56): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
 C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(556,37): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(884,68): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(884,49): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(886,68): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\igramoz\Desktop\Elon clone\elontheplumber\elon\main.cpp(886,49): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
   elon.vcxproj -> C:\Users\igramoz\Desktop\Elon clone\elontheplumber\x64\Debug\elon.exe

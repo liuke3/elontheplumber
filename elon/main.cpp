@@ -492,16 +492,16 @@ int main()
             }
             else if (event.type == sf::Event::MouseButtonPressed)
             {
-                if (mx >= 342 && mx <= 574 && my <= 469 && my >= 372)
+                if (mx >= 342 && mx <= 574 && my <= 439 && my >= 342)
                 {
                     game = true;
                     break;
                 }
-                else if (mx >= 342 && mx <= 574 && my >= 500 && my <= 596)
+                else if (mx >= 342 && mx <= 574 && my >= 470 && my <= 566)
                 {
                     cout << "tasti" << endl;
                 }
-                else if (mx >= 342 && mx <= 574 && my >= 644 && my <= 742)
+                else if (mx >= 342 && mx <= 574 && my >= 614 && my <= 712)
                 {
                     return 0;
                 }
@@ -509,19 +509,19 @@ int main()
             }
             else if (event.type == sf::Event::MouseMoved)
             {
-                if (mx >= 342 && mx <= 574 && my <= 469 && my >= 372)
+                if (mx >= 342 && mx <= 574 && my <= 439 && my >= 342)
                 {
                     tastogioca = true;
                     tastotasti = false;
                     tastoesci = false;
                 }
-                else if (mx >= 342 && mx <= 574 && my >= 500 && my <= 596)
+                else if (mx >= 342 && mx <= 574 && my >= 470 && my <= 566)
                 {
                     tastotasti = true;
                     tastogioca = false;
                     tastoesci = false;
                 }
-                else if (mx >= 342 && mx <= 574 && my >= 644 && my <= 742)
+                else if (mx >= 342 && mx <= 574 && my >= 614 && my <= 712)
                 {
                     tastoesci = true;
                     tastotasti = false;
@@ -708,6 +708,7 @@ int main()
             width = size.x;
             height = size.y;
 
+
             if (size.x != 896 || size.y != 800)
             {
                 window.setSize(sf::Vector2u(896, 800));
@@ -715,6 +716,7 @@ int main()
             }
             //
             //  Input Mouse.
+
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 // Calcolo Coordinata X Relativa.
