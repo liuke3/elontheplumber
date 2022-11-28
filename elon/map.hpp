@@ -12,6 +12,7 @@ using namespace sf;
 #define PAVIMENTO   0
 #define MURO        1
 #define VUOTO       2
+#define PORTA       3
 #define VALVOLA     3
 #define CESSO       4   // Nastro
 #define VASCA       5   // Nastro
@@ -19,6 +20,7 @@ using namespace sf;
 #define BIDET       7   // Martello
 #define LAVANDINO   8   // Chiave
 #define PORTELLO    9   // Chiave
+#define PORTA_INTERACT 33
 
 #define FONT                "assets\\font.ttf"
 
@@ -45,6 +47,16 @@ using namespace sf;
 #define PORTELLO_OK         "assets\\portello.png"
 #define PORTELLO_ROTTO      "assets\\portello_rotto.png"
 
+#define PORTA1              "assets\\porta1.png"
+#define PORTA2              "assets\\porta2.png"
+
+#define CASSETTO1_TEXTURE  "assets\\cassetto1.png"
+#define CASSETTO2_TEXTURE  "assets\\cassetto2.png"
+#define CASSETTO3_TEXTURE  "assets\\cassetto3.png"
+
+#define CASSETTO1 40
+#define CASSETTO2 41
+#define CASSETTO3 42
 
 
 
@@ -68,6 +80,9 @@ struct OBJ
     // Coordinata Y.
     short y;
 };
+
+
+
 
 
 
@@ -150,6 +165,296 @@ int currentMapIndex = 0;
 
 
 
+MAP map1 {
+    1,
+    "assets\\pav1.png",
+    "assets\\muro1.png",
+    new unsigned[8] {
+        0b00000000000000000000111111111111,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000111111000001,
+        0b00000000000000000000111111000001,
+        0b00000000000000000000111111000001,
+        0b00000000000000000000111111111111,
+    },
+    new unsigned[8] {
+        0b00000000010101010101010101010101,
+        0b00000000010101010101010101010101,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000101010101010000000000011,
+        0b00000000101010101010000000000001,
+        0b00000000101010101010000000000001,
+    },
+    2,
+    new OBJ[2] {
+        OBJ{ true, PORTA_INTERACT, 0, 5},
+        OBJ{ true, VALVOLA, 9, 1 },
+    },
+    1,
+    0,
+    false,
+    true,
+};
+
+
+MAP map2{
+    2,
+    "assets\\pav2.png",
+    "assets\\muro2.png",
+    new unsigned[8] {
+        0b000000000000000000000111111111111,
+        0b000000000000000000000111110000101,
+        0b000000000000000000000111110000001,
+        0b000000000000000000000100000000001,
+        0b000000000000000000000100000000001,
+        0b000000000000000000000100000000001,
+        0b000000000000000000000100000000001,
+        0b000000000000000000000111111111111,
+    },
+    new unsigned[8] {
+        0b00000000101010101001010101010101,
+        0b00000000101010101001010101010101,
+        0b00000000010101010100000000000001,
+        0b00000000010101010100000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000011,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+    },
+    3,
+    new OBJ[3] {
+        OBJ{ true, PORTA_INTERACT, 0, 5},
+        OBJ{ true, VALVOLA, 9, 3 },
+        OBJ{ true, CESSO, 2, 2 },
+    },
+    2,
+    0,
+    false,
+    true,
+};
+
+
+
+MAP map3{
+    3,
+    "assets\\pav3.png",
+    "assets\\muro3.png",
+    new unsigned[8] {
+        0b00000000000000000000111111111111,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100011110001,
+        0b00000000000000000000100011110001,
+        0b00000000000000000000100011110001,
+        0b00000000000000000000111111111111,
+    },
+    new unsigned[8] {
+        0b00000000010101010101010101010101,
+        0b00000000010101010101010101110101,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000001010101000000001,
+        0b00000000010000001010101000000001,
+        0b00000000010000001010101000000001,
+    },
+    4,
+    new OBJ[4] {
+        OBJ{ true, PORTA_INTERACT, 2, 1},
+        OBJ{ true, VALVOLA, 11, 5 },
+        OBJ{ true, CESSO, 2, 6 },
+        OBJ{ true, VASCA, 9, 3 },
+    },
+    3,
+    0,
+    false,
+    true,
+};
+
+
+
+MAP map4{
+    4,
+    "assets\\pav4.png",
+    "assets\\muro4.png",
+    new unsigned[8] {
+        0b00000000000000000000111111111111,
+        0b00000000000000000000110000000001,
+        0b00000000000000000000100001000001,
+        0b00000000000000000000100011110001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000110000000111,
+        0b00000000000000000000110000000011,
+        0b00000000000000000000111111111111,
+    },
+    new unsigned[8] {
+        0b00000000010101010101010101010101,
+        0b00000000010101010101010101010101,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000101110100000001,
+        0b00000000010000000000000000000001,
+        0b00000000100100000000000000000110,
+        0b00000000100100000000000000000110,
+    },
+    5,
+    new OBJ[5] {
+        OBJ{ true, PORTA_INTERACT, 7, 4},
+        OBJ{ true, VALVOLA, 0, 4 },
+        OBJ{ true, CESSO, 2, 6 },
+        OBJ{ true, VASCA, 6, 3 },
+        OBJ{ true, DOCCIA, 10, 1 },
+    },
+    4,
+    0,
+    false,
+    true,
+};
+
+
+
+MAP map5{
+    5,
+    "assets\\pav5.png",
+    "assets\\muro5.png",
+    new unsigned[8] {
+        0b00000000000000000000111111111111,
+        0b00000000000000000000100000010001,
+        0b00000000000000000000100001000001,
+        0b00000000000000000000100001000101,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000110001111111,
+        0b00000000000000000000100001111111,
+        0b00000000000000000000111111111111,
+    },
+    new unsigned[8] {
+        0b00000000010101010101010101010101,
+        0b00000000010101010101010101011101,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000010101010101010,
+        0b00000000010000000010101010101010,
+    },
+    6,
+    new OBJ[6] {
+        OBJ{ true, PORTA_INTERACT, 10, 1},
+        OBJ{ true, VALVOLA, 8, 1 },
+        OBJ{ true, CESSO, 2, 4 },
+        OBJ{ true, VASCA, 4, 2 },
+        OBJ{ true, DOCCIA, 6, 3 },
+        OBJ{ true, BIDET, 10, 6 },
+    },
+    5,
+    0,
+    false,
+    true,
+};
+
+
+
+MAP map6{
+    6,
+    "assets\\pav6.png",
+    "assets\\muro6.png",
+    new unsigned[8] {
+        0b00000000000000000000111111111111,
+        0b00000000000000000000111111110101,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000111111111111,
+    },
+    new unsigned[8] {
+        0b00000000010101011010101001010101,
+        0b00000000010101010101010101010101,
+        0b00000000010000000101010100000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000011,
+        0b00000000010000000000000000000001,
+    },
+    8,
+    new OBJ[8] {
+        OBJ{ true, PORTA_INTERACT, 10, 1},
+        OBJ{ true, VALVOLA, 11, 6 },
+        OBJ{ true, CESSO, 8, 2 },
+        OBJ{ true, CESSO, 9, 2 },
+        OBJ{ true, CESSO, 10, 2 },
+        OBJ{ true, BIDET, 1, 2 },
+        OBJ{ true, BIDET, 2, 2 },
+        OBJ{ true, BIDET, 3, 2 },
+    },
+    7,
+    0,
+    false,
+    true,
+};
+
+
+MAP map7{
+    7,
+    "assets\\pav6.png",
+    "assets\\muro6.png",
+    new unsigned[8] {
+        0b00000000000000000000111111111111,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000100000000001,
+        0b00000000000000000000111111111111,
+        0b00000000000000000000111111111111,
+        0b00000000000000000000111111111111,
+    },
+    new unsigned[8] {
+        0b00000000010101010101010101010101,
+        0b00000000010101010101010101010101,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000011,
+        0b00000000010000000000000000000001,
+        0b00000000010000000000000000000001,
+        0b00000000101010101010101010101010,
+        0b00000000101010101010101010101010,
+    },
+    7,
+    new OBJ[7] {
+        OBJ{ true, PORTA_INTERACT, 0, 3},
+        OBJ{ true, VALVOLA, 9, 2 },
+        OBJ{ true, CESSO, 8, 2 },
+        OBJ{ true, CESSO, 9, 2 },
+        OBJ{ true, CESSO, 10, 2 },
+        OBJ{ true, BIDET, 5, 5 },
+        OBJ{ true, LAVANDINO, 2, 2 },
+    },
+    6,
+    0,
+    false,
+    true,
+};
+
+
+
+
+MAP maps[7] {
+    map7,
+    map1,
+    map2,
+    map3,
+    map4,
+    map5,
+    map6,
+};
+
+
 
 MAP generateDefaultMap()
 {
@@ -189,7 +494,7 @@ MAP generateDefaultMap()
         4194305,   // 00000000 01000000 00000000 00000001
         4194305,   // 00000000 01000000 00000000 00000001
         4194305,   // 00000000 01000000 00000000 00000001
-        4194305,   // 00000000 01000000 00000000 00000001
+        12582913,  // 00000000 11000000 00000000 00000001
         4194305,   // 00000000 01000000 00000000 00000001
         4194305,   // 00000000 01000000 00000000 00000001
     };
@@ -286,6 +591,12 @@ void drawMap(MAP map, RenderWindow &window)
     vuotoTexture = sf::Color::Black;
     vuoto.setFillColor(vuotoTexture);
 
+    // Porta.
+    sf::Sprite porta;
+    sf::Texture portaTexture;
+    portaTexture.loadFromFile(PORTA1);
+    porta.setTexture(portaTexture);
+
     // Disegno la Mappa.
     for (int y = 0; y < 8; y++)
     {
@@ -314,6 +625,25 @@ void drawMap(MAP map, RenderWindow &window)
             case VUOTO:
                 vuoto.setPosition((x + 1) * 64, (y + 1) * 64);
                 window.draw(vuoto);
+                break;
+
+            case PORTA:
+                muro.setPosition((x + 1) * 64, (y + 1) * 64);
+                window.draw(muro);
+
+                if (map.riparazioni == map.riparazioniTot)
+                {
+                    portaTexture.loadFromFile(PORTA2);
+                    porta.setTexture(portaTexture);
+                }
+                else
+                {
+                    portaTexture.loadFromFile(PORTA1);
+                    porta.setTexture(portaTexture);
+                }
+
+                porta.setPosition((x + 1) * 64, (y + 1) * 64);
+                window.draw(porta);
                 break;
 
             default:
@@ -400,6 +730,24 @@ void drawMap(MAP map, RenderWindow &window)
                 else
                     objTexture.loadFromFile(PORTELLO_OK);
 
+                obj.setTexture(objTexture, true);
+                window.draw(obj);
+                break;
+
+            case CASSETTO1:
+                objTexture.loadFromFile(CASSETTO1_TEXTURE);
+                obj.setTexture(objTexture, true);
+                window.draw(obj);
+                break;
+
+            case CASSETTO2:
+                objTexture.loadFromFile(CASSETTO2_TEXTURE);
+                obj.setTexture(objTexture, true);
+                window.draw(obj);
+                break;
+
+            case CASSETTO3:
+                objTexture.loadFromFile(CASSETTO3_TEXTURE);
                 obj.setTexture(objTexture, true);
                 window.draw(obj);
                 break;

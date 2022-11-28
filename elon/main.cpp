@@ -81,9 +81,21 @@ int dir = 0;
 
 
 
+//
+//  Font Scritte
+//
+
+sf::Font font;
+sf::Text text;
+
+
 MAP loadNextMap(RenderWindow& wd)
 {
     MAP t;
+
+
+    cout << "CIAO!";
+
 
     currentMapIndex++;
 
@@ -103,7 +115,7 @@ MAP loadNextMap(RenderWindow& wd)
         message += "\nSpugna";
         break;
 
-    case 2:
+    case 1:
         tools[NASTRO] = true;
         cosoTexture.loadFromFile("assets\\scotch.png");
         coso.setTexture(cosoTexture);
@@ -127,7 +139,6 @@ MAP loadNextMap(RenderWindow& wd)
     default:
         break;
     }
-
 
     bool continue_ = true;
 
@@ -174,7 +185,6 @@ MAP loadNextMap(RenderWindow& wd)
             wd.draw(text);
         }
 
-
         while (wd.pollEvent(event))
         {
             if (event.type == sf::Event::KeyPressed)
@@ -192,7 +202,9 @@ MAP loadNextMap(RenderWindow& wd)
     if (currentMapIndex > 8)
         return generateDefaultMap();
     else
-        return generateDefaultMap();
+    {
+        return maps[currentMapIndex];
+    }
 }
 
 
@@ -278,7 +290,7 @@ bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
     return false;
 }
 
-bool interagisci(int playerX, int playerY, int dir, MAP& map, Window& wd)
+bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
 {
     // Controllo.
     if (playerY - 1 < 0 || playerY + 1 > 7 ||
@@ -290,11 +302,28 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, Window& wd)
     {
         // Valvola.
         if (quiOggetto(playerX, playerY - 1, map).type == VALVOLA)
+        {
             if (!map.valvola)
             {
                 map.valvola = true;
                 return true;
             }
+        }
+        else
+        {
+            if (!map.valvola)
+            {
+                text.setString("Chiudi la valvola prima...");
+                wd.draw(text);
+                return false;
+            }
+        }
+
+        if (quiOggetto(playerX, playerY - 1, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
+        {
+            map = loadNextMap(wd);
+            return true;
+        }
 
         // Nastro.
         if (selectedTool == NASTRO && (quiOggetto(playerX, playerY - 1, map).type == CESSO ||
@@ -329,11 +358,28 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, Window& wd)
     {
         // Valvola.
         if (quiOggetto(playerX, playerY + 1, map).type == VALVOLA)
+        {
             if (!map.valvola)
             {
                 map.valvola = true;
                 return true;
             }
+        }
+        else
+        {
+            if (!map.valvola)
+            {
+                text.setString("Chiudi la valvola prima...");
+                wd.draw(text);
+                return false;
+            }
+        }
+
+        if (quiOggetto(playerX, playerY + 1, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
+        {
+            map = loadNextMap(wd);
+            return true;
+        }
 
         // Nastro.
         if (selectedTool == NASTRO && (quiOggetto(playerX, playerY + 1, map).type == CESSO ||
@@ -366,13 +412,39 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, Window& wd)
     // Sinsitra.
     if (dir == LEFT)
     {
+
+        if (quiOggetto(playerX - 1, playerY, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
+        {
+            map = loadNextMap(wd);
+            return true;
+        }
+        else
+        {
+            text.setString("Ripara tutto prima...");
+            wd.draw(text);
+            return false;
+        }
+
+
         // Valvola.
         if (quiOggetto(playerX - 1, playerY, map).type == VALVOLA)
+        {
             if (!map.valvola)
             {
                 map.valvola = true;
                 return true;
             }
+        }
+        else
+        {
+            if (!map.valvola)
+            {
+                text.setString("Chiudi la valvola prima...");
+                wd.draw(text);
+                return false;
+            }
+        }
+
 
         // Nastro.
         if (selectedTool == NASTRO && (quiOggetto(playerX - 1, playerY, map).type == CESSO ||
@@ -407,11 +479,28 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, Window& wd)
     {
         // Valvola.
         if (quiOggetto(playerX + 1, playerY, map).type == VALVOLA)
+        {
             if (!map.valvola)
             {
                 map.valvola = true;
                 return true;
             }
+        }
+        else
+        {
+            if (!map.valvola)
+            {
+                text.setString("Chiudi la valvola prima...");
+                wd.draw(text);
+                return false;
+            }
+        }
+
+        if (quiOggetto(playerX + 1, playerY, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
+        {
+            map = loadNextMap(wd);
+            return true;
+        }
 
         // Nastro.
         if (selectedTool == NASTRO && (quiOggetto(playerX + 1, playerY, map).type == CESSO ||
@@ -496,10 +585,27 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
         if (rx - 1 == playerX && ry - 1 == playerY)
             return "Elon Musk";
 
-        // No Oggetto.
-        if (tempObj.type < 0)
+        if (ry - 2 >= 0)
         {
-            switch (evaluateMap(map.map[ry - 1], rx))
+            tempObj = quiOggetto(rx - 1, ry - 2, map);
+
+            if (tempObj.type == DOCCIA)
+            {
+                if (tempObj.rotto)
+                    return objAbout1[tempObj.type - 3];
+                else
+                    return objAbout2[tempObj.type - 3];
+            }
+            else
+            {
+                tempObj = quiOggetto(rx - 1, ry - 1, map);
+            }
+        }
+
+        // No Oggetto.
+        if (tempObj.type < 0 || evaluateMap(map.map[ry - 1], rx - 1) == PORTA)
+        {
+            switch (evaluateMap(map.map[ry - 1], rx - 1))
             {
             case PAVIMENTO:
                 if (map.acqua)
@@ -517,6 +623,13 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
                 return "Vuoto Cosmico";
                 break;
 
+            case PORTA:
+                if (map.riparazioni != map.riparazioniTot)
+                    return "Porta Sigillata...";
+                else
+                    return "Porta Aperta!";
+                break;
+
             default:
                 break;
             }
@@ -524,6 +637,14 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
         // Sì Oggetto.
         else
         {
+            if (tempObj.type == VALVOLA)
+            {
+                if (!map.valvola)
+                    return objAbout1[tempObj.type - 3];
+                else
+                    return objAbout2[tempObj.type - 3];
+            }
+
             if (tempObj.rotto)
                 return objAbout1[tempObj.type - 3];
             else
@@ -592,6 +713,16 @@ void drawToolBar(sf::RenderWindow& window)
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(896, 800), "Elon the Plumber");
+
+
+
+    font.loadFromFile(FONT);
+    text.setFont(font);
+    text.setString("");
+    text.setCharacterSize(18);
+    text.setPosition(32, 720);
+
+
 
     //menu
     sf::Sprite menu;
@@ -825,7 +956,7 @@ int main()
 
 
 
-    MAP defaultMap = generateDefaultMap();
+    MAP defaultMap = maps[0];
 
 
     //
@@ -844,17 +975,6 @@ int main()
     cop1.setTexture(cop1_texture);
     cop1.setPosition(0, 700);
 
-    //
-    //  Font Scritte
-    //
-
-    sf::Font font;
-    font.loadFromFile(FONT);
-    sf::Text text;
-    text.setFont(font);
-    text.setString("");
-    text.setCharacterSize(18);
-    text.setPosition(32, 720);
     //passi
     bool footstep = true;
 
@@ -876,7 +996,7 @@ int main()
         window.clear(sf::Color(48, 48, 48));
 
         // Carico Prossima Mappa.
-        if (defaultMap.riparazioni == defaultMap.riparazioniTot)
+       /* if (defaultMap.riparazioni == defaultMap.riparazioniTot)
         {
             defaultMap = loadNextMap(window);
 
@@ -884,7 +1004,7 @@ int main()
             {
                 while (true);
             }
-        }
+        }*/
 
         // Copertura Superiore.
         window.draw(cop0);
@@ -895,11 +1015,9 @@ int main()
         // ToolBar.
         drawToolBar(window);
 
-        // Oggetti.
-
-    //
-    //  Wrench
-    //
+        //
+        //  Wrench
+        //
 
         sf::Sprite wrench;
         sf::Texture wrenchTexture;
@@ -953,16 +1071,18 @@ int main()
 
         spongebob.setTexture(spongebobTexture);
 
+        // Posizione Item.
         spongebob.setPosition(320 + 0 * 64, 610);
         scotch.setPosition(320 + 1 * 64, 610);
         martello.setPosition(320 + 2 * 64, 610);
         wrench.setPosition(320 + 3 * 64, 610);
+        // Disegno Item.
         window.draw(spongebob);
         window.draw(scotch);
         window.draw(martello);
         window.draw(wrench);
 
-        //  Player.
+        // Player.
         window.draw(player);
         // Testo.
         window.draw(text);
@@ -976,22 +1096,20 @@ int main()
 
             if (event.type == sf::Event::Closed)
                 window.close();
-
-
-            //resize menu
+            //
+            //  Resize.
+            //
 
             size = window.getSize();
             width = size.x;
             height = size.y;
 
-
             if (size.x != 896 || size.y != 800)
-            {
                 window.setSize(sf::Vector2u(896, 800));
 
-            }
             //
             //  Input Mouse.
+            //
 
             if (event.type == sf::Event::MouseButtonPressed)
             {
@@ -1103,6 +1221,7 @@ int main()
                         if (canMove(playerX + 1, playerY, defaultMap))
                             playerX += 1;
                     }
+
                     sound.stop();
                     if (footstep) {
                         buffer.loadFromFile("assets\\footstep1.wav");
