@@ -49,9 +49,9 @@ using namespace sf;
 // Stato Strumenti.
 bool tools[4] = {
     true,
-    false,
-    false,
-    false,
+    true,
+    true,
+    true,
 };
 
 // Strumento Selezionato.
@@ -80,7 +80,6 @@ int dir = 0;
 
 
 
-
 //
 //  Font Scritte
 //
@@ -89,19 +88,19 @@ sf::Font font;
 sf::Text text;
 
 
-MAP loadNextMap(RenderWindow& wd)
+
+int giocatelah(RenderWindow& window);
+
+
+MAP loadNextMap(RenderWindow& wd, int &playerX, int &playerY)
 {
     MAP t;
-
-
-    cout << "CIAO!";
-
 
     currentMapIndex++;
 
     sf::Sprite coso;
     sf::Texture cosoTexture;
-
+    cosoTexture.loadFromFile("assets\\texture.png");
     coso.setPosition(40, 180);
 
     string message = "Hai Sbloccato: ";
@@ -122,7 +121,7 @@ MAP loadNextMap(RenderWindow& wd)
         message += "\nNastro Adesivo";
         break;
 
-    case 4:
+    case 3:
         tools[MARTELLO] = true;
         cosoTexture.loadFromFile("assets\\hammer.png");
         coso.setTexture(cosoTexture);
@@ -167,16 +166,15 @@ MAP loadNextMap(RenderWindow& wd)
             wd.draw(text);
         }
 
-        // non ultimo livello
-
-        if (currentMapIndex != 8)
+        // Non Ultimo Livello.
+        if (currentMapIndex != 7)
         {
             text.setString("Premi un tasto per continuare...");
             text.setCharacterSize(24);
             text.setPosition(40, 740);
             wd.draw(text);
         }
-        // ultimo livello
+        // Ultimo Livello.
         else
         {
             text.setString("Premi un tasto per terminare...");
@@ -186,12 +184,8 @@ MAP loadNextMap(RenderWindow& wd)
         }
 
         while (wd.pollEvent(event))
-        {
             if (event.type == sf::Event::KeyPressed)
-            {
                 continue_ = false;
-            }
-        }
 
         wd.display();
 
@@ -199,12 +193,13 @@ MAP loadNextMap(RenderWindow& wd)
             break;
     }
 
-    if (currentMapIndex > 8)
-        return generateDefaultMap();
+    playerX = 3;
+    playerY = 3;
+
+    if (currentMapIndex > 7)
+        giocatelah(wd);
     else
-    {
         return maps[currentMapIndex];
-    }
 }
 
 
@@ -290,7 +285,7 @@ bool hoToccatoOggetto(int playerX, int playerY, int dir, MAP map)
     return false;
 }
 
-bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
+bool interagisci(int& playerX, int& playerY, int dir, MAP& map, RenderWindow& wd)
 {
     // Controllo.
     if (playerY - 1 < 0 || playerY + 1 > 7 ||
@@ -300,6 +295,17 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
     // Nord.
     if (dir == NORTH)
     {
+        if (quiOggetto(playerX, playerY - 1, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
+        {
+            map = loadNextMap(wd, playerX, playerY);
+            return true;
+        }
+        else
+        {
+            text.setString("Ripara tutto prima...");
+            wd.draw(text);
+        }
+
         // Valvola.
         if (quiOggetto(playerX, playerY - 1, map).type == VALVOLA)
         {
@@ -317,12 +323,6 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
                 wd.draw(text);
                 return false;
             }
-        }
-
-        if (quiOggetto(playerX, playerY - 1, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
-        {
-            map = loadNextMap(wd);
-            return true;
         }
 
         // Nastro.
@@ -356,6 +356,17 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
     // Sud.
     if (dir == SOUTH)
     {
+        if (quiOggetto(playerX, playerY + 1, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
+        {
+            map = loadNextMap(wd, playerX, playerY);
+            return true;
+        }
+        else
+        {
+            text.setString("Ripara tutto prima...");
+            wd.draw(text);
+        }
+
         // Valvola.
         if (quiOggetto(playerX, playerY + 1, map).type == VALVOLA)
         {
@@ -373,12 +384,6 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
                 wd.draw(text);
                 return false;
             }
-        }
-
-        if (quiOggetto(playerX, playerY + 1, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
-        {
-            map = loadNextMap(wd);
-            return true;
         }
 
         // Nastro.
@@ -412,19 +417,16 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
     // Sinsitra.
     if (dir == LEFT)
     {
-
         if (quiOggetto(playerX - 1, playerY, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
         {
-            map = loadNextMap(wd);
+            map = loadNextMap(wd, playerX, playerY);
             return true;
         }
         else
         {
             text.setString("Ripara tutto prima...");
             wd.draw(text);
-            return false;
         }
-
 
         // Valvola.
         if (quiOggetto(playerX - 1, playerY, map).type == VALVOLA)
@@ -444,7 +446,6 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
                 return false;
             }
         }
-
 
         // Nastro.
         if (selectedTool == NASTRO && (quiOggetto(playerX - 1, playerY, map).type == CESSO ||
@@ -477,6 +478,17 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
     // Destra.
     if (dir == RIGHT)
     {
+        if (quiOggetto(playerX + 1, playerY, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
+        {
+            map = loadNextMap(wd, playerX, playerY);
+            return true;
+        }
+        else
+        {
+            text.setString("Ripara tutto prima...");
+            wd.draw(text);
+        }
+
         // Valvola.
         if (quiOggetto(playerX + 1, playerY, map).type == VALVOLA)
         {
@@ -494,12 +506,6 @@ bool interagisci(int playerX, int playerY, int dir, MAP& map, RenderWindow& wd)
                 wd.draw(text);
                 return false;
             }
-        }
-
-        if (quiOggetto(playerX + 1, playerY, map).type == PORTA_INTERACT && map.riparazioni == map.riparazioniTot)
-        {
-            map = loadNextMap(wd);
-            return true;
         }
 
         // Nastro.
@@ -640,9 +646,9 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
             if (tempObj.type == VALVOLA)
             {
                 if (!map.valvola)
-                    return objAbout1[tempObj.type - 3];
+                    return objAbout1[0];
                 else
-                    return objAbout2[tempObj.type - 3];
+                    return objAbout2[0];
             }
 
             if (tempObj.rotto)
@@ -657,70 +663,14 @@ string getAbout(int x, int y, MAP map, sf::RenderWindow& window)
 
 
 
-void drawToolBar(sf::RenderWindow& window)
+
+int giocatelah(RenderWindow &window)
 {
-    sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
-    sf::Color redondi;
-    redondi = sf::Color(100, 100, 100, 100);
-    shape.setFillColor(redondi);
-
-    sf::Sprite Obj_exhibition;
-
-    sf::Texture Obj_exhibition_texture;
-    Obj_exhibition_texture.loadFromFile("assets\\object-touch.png");
-    sf::Texture Obj_exhibition_selected_texture;
-    Obj_exhibition_selected_texture.loadFromFile("assets\\object-touch-selected.png");
-
-    sf::Font font;
-    font.loadFromFile(FONT);
-    sf::Text text;
-    text.setFont(font);
-    text.setCharacterSize(12);
-
-    for (int i = 0; i < 4; i++)
-    {
-        stringstream ss;
-
-        // aggiungo testo allo stream
-        ss << i + 1;
-        // imposto coordinate testo.
-        text.setPosition(64 + 256 + i * 64 + 32, 665);
-        // imposto testo
-        text.setString(ss.str());
-
-        // sfondo corice
-        shape.setPosition(64 + 256 + i * 64, 610);
-        // disegno sfondo cornice
-        window.draw(shape);
-        // imposto coordinate cornice
-        Obj_exhibition.setPosition(64 + 256 + i * 64, 610);
-
-        // oggetto selezionato. (faccio bordo bello)
-        if (i == selectedTool)
-            Obj_exhibition.setTexture(Obj_exhibition_selected_texture);
-        // altro oggetto (faccio bordo brutto)
-        else
-            Obj_exhibition.setTexture(Obj_exhibition_texture);
-
-        // disegno casella.
-        window.draw(Obj_exhibition);
-        // disegno testo
-        window.draw(text);
-    }
-}
-
-
-int main()
-{
-    sf::RenderWindow window(sf::VideoMode(896, 800), "Elon the Plumber");
-
-
-
-    font.loadFromFile(FONT);
-    text.setFont(font);
-    text.setString("");
-    text.setCharacterSize(18);
-    text.setPosition(32, 720);
+    currentMapIndex = 0;
+    tools[0] = true;
+    tools[1] = false;
+    tools[2] = false;
+    tools[3] = false;
 
 
 
@@ -942,6 +892,85 @@ int main()
         }
     }
     musica.stop();
+}
+
+
+
+
+
+void drawToolBar(sf::RenderWindow& window)
+{
+    sf::RectangleShape shape(sf::Vector2f(64.0F, 64.0F));
+    sf::Color redondi;
+    redondi = sf::Color(100, 100, 100, 100);
+    shape.setFillColor(redondi);
+
+    sf::Sprite Obj_exhibition;
+
+    sf::Texture Obj_exhibition_texture;
+    Obj_exhibition_texture.loadFromFile("assets\\object-touch.png");
+    sf::Texture Obj_exhibition_selected_texture;
+    Obj_exhibition_selected_texture.loadFromFile("assets\\object-touch-selected.png");
+
+    sf::Font font;
+    font.loadFromFile(FONT);
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(12);
+
+    for (int i = 0; i < 4; i++)
+    {
+        stringstream ss;
+
+        // aggiungo testo allo stream
+        ss << i + 1;
+        // imposto coordinate testo.
+        text.setPosition(64 + 256 + i * 64 + 32, 665);
+        // imposto testo
+        text.setString(ss.str());
+
+        // sfondo corice
+        shape.setPosition(64 + 256 + i * 64, 610);
+        // disegno sfondo cornice
+        window.draw(shape);
+        // imposto coordinate cornice
+        Obj_exhibition.setPosition(64 + 256 + i * 64, 610);
+
+        // oggetto selezionato. (faccio bordo bello)
+        if (i == selectedTool)
+            Obj_exhibition.setTexture(Obj_exhibition_selected_texture);
+        // altro oggetto (faccio bordo brutto)
+        else
+            Obj_exhibition.setTexture(Obj_exhibition_texture);
+
+        // disegno casella.
+        window.draw(Obj_exhibition);
+        // disegno testo
+        window.draw(text);
+    }
+}
+
+
+int main()
+{
+    sf::RenderWindow window(sf::VideoMode(896, 800), "Elon the Plumber");
+
+
+    sf::Vector2u size;
+    unsigned int width;
+    unsigned int height;
+
+    if (giocatelah(window) == 0)
+        return 0;
+
+    font.loadFromFile(FONT);
+    text.setFont(font);
+    text.setString("");
+    text.setCharacterSize(18);
+    text.setPosition(32, 720);
+
+
+
     //
     // Player
     //
